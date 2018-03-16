@@ -12,7 +12,7 @@ Open a shell for an example producer
 
 ```
 ./start-kafka-shell.sh 172.17.0.1 172.17.0.1:2181
-$KAFKA_HOME/bin/kafka-console-producer.sh --topic=topic2 --broker-list=`brokerst.sh`
+$KAFKA_HOME/bin/kafka-console-producer.sh --topic=topic2 --broker-list=`broker-list.sh`
 ```
 
 Open a shell for an example consumer
