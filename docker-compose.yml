@@ -11,12 +11,13 @@ services:
         environment:
             KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
             KAFKA_ZOOKEEPER_CONNECT: 172.17.0.1:2181
+            KAFKA_CREATE_TOPICS: "test:1:1"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
     api:
         build: api
         ports:
-            - "1337:8080"
+            - "8080:8080"
         depends_on:
             - kafka
     client:
@@ -27,4 +28,9 @@ services:
             - "80:80"
         depends_on:
             - api
+    sensor:
+        build: sensor
+        command: bash -c "wait-for-it api:8080 -- python main.py"
+        depends_on:
+        - api
 
