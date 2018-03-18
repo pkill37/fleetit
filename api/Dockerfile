@@ -6,4 +6,4 @@ RUN mvn install
 FROM openjdk:9-jre-slim
 WORKDIR /app
 COPY --from=build /app/target/ /app
-CMD ["java", "-jar", "acme-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+CMD ["java", "-jar", "api-0.0.1-SNAPSHOT.jar"]
