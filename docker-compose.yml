@@ -13,4 +13,18 @@ services:
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+    api:
+        build: api
+        ports:
+            - "1337:80"
+        depends_on:
+            - kafka
+    client:
+        image: nginx:alpine
+        volumes:
+            - ./client:/usr/share/nginx/html
+        ports:
+            - "80:80"
+        depends_on:
+            - api
 
