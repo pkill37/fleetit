@@ -132,7 +132,7 @@ for r in range(N_runs):
 for run in data_stream['runs']:
     for step in run['steps']:
         print(step)
-        r = requests.post('http://api:8080/topics/test', step)
-        print(r)
+        r = requests.post('http://api:8080/topics/test', json=step, headers={'Content-type': 'application/json'})
+        print(r.text)
         time.sleep(1)
 

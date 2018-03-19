@@ -1,7 +1,7 @@
 spring:
   kafka:
     bootstrap-servers:
-      - 172.17.0.1:9092
+      - kafka:9092
     producer:
       acks: all
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
