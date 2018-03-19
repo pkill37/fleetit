@@ -132,7 +132,9 @@ for r in range(N_runs):
 for run in data_stream['runs']:
     for step in run['steps']:
         print(step)
-        r = requests.post('http://api:8080/topics/test', json=step, headers={'Content-type': 'application/json'})
+        headers = {'Content-Type': 'application/vnd.kafka.json.v2+json' }
+        payload = {'records': [{'value': step}]}
+        r = requests.post('http://kafka-rest-proxy:8082/topics/test', json=payload, headers=headers)
         print(r.text)
         time.sleep(1)
 
