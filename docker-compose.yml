@@ -150,18 +150,26 @@ services:
     depends_on:
       - zoo1
 
+  sensor:
+    build: sensor
+    command: bash -c "wait-for-it kafka-rest-proxy:8082 -- python main.py"
+    environment:
+      KAFKA_BROKER: kafka1:9092
+    depends_on:
+      - kafka-rest-proxy
+
+  websocket:
+    build: websocket
+    command: node index.js
+    ports:
+      - "9999:9999"
+    depends_on:
+      - kafka1
+
   client:
-    image: nginx:alpine
-    volumes:
-      - ./client:/usr/share/nginx/html
+    build: client
     ports:
       - "80:80"
     depends_on:
       - kafka-rest-proxy
-
-  sensor:
-    build: sensor
-    command: bash -c "wait-for-it kafka-rest-proxy:8082 -- python main.py"
-    depends_on:
-      - kafka-rest-proxy
-
+      - websocket
