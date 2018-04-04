@@ -66,8 +66,8 @@ def gen_datetime(min_year=2017, max_year=datetime.now().year):
 if __name__ == "__main__":
     gmaps = googlemaps.Client(key='AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U')
 
-    init_lat = 40.714224
-    init_lon = -73.961452
+    ref_lat = 40.714224
+    ref_lon = -73.961452
 
     route_range = 0.5
     N_runs = 10;
@@ -75,7 +75,25 @@ if __name__ == "__main__":
     data_stream = {"runs" : []}
 
     for r in range(N_runs):
-        rand_coord_i,rand_coord_f = findCoordinates(init_lat,init_lon,route_range)
+
+
+        init_lat = ref_lat + random.random()*route_range
+        init_lon = ref_lon + random.random()*route_range
+
+        finish_lat = ref_lat + random.random()*route_range
+        finish_lon = ref_lon + random.random()*route_range
+
+        raw_coords =  gmaps.nearest_roads([(init_lat, init_lon), (finish_lat, finish_lon)])
+        # if it couldnt find road
+        if not raw_coords or len(raw_coords) < 2:
+            continue
+
+        start = raw_coords[0]["location"]
+        finish = raw_coords[1]["location"]
+
+        rand_coord_i = (start["latitude"], start["longitude"])
+        rand_coord_f = (finish["latitude"], finish["longitude"]) 
+
 
         directions_result = gmaps.directions(rand_coord_i, rand_coord_f ,mode="bicycling")
         if not directions_result :
@@ -85,7 +103,10 @@ if __name__ == "__main__":
 
         duration, gps_route_key_points = run_steps(directions_result)
 
-        line = LineString(gps_route_key_points)
+        gps_points_dict = gmaps.snap_to_roads(gps_route_key_points, interpolate = True)
+        gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
+
+        line = LineString(gps_points_list)
 
         initial_datetime = gen_datetime()
 
@@ -94,6 +115,9 @@ if __name__ == "__main__":
         curr_temperature = randint(10,25)
 
         sample_num = duration//10
+
+
+        curr_user = randint(0,10**4)
 
         for i in range(sample_num):
             data_inst = {}
@@ -111,6 +135,8 @@ if __name__ == "__main__":
             curr_temperature += (randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/100
             data_inst["temp"] = curr_temperature
             curr_run["steps"].append(data_inst)
+
+            curr_run["uid"] = curr_user
 
         data_stream["runs"].append(curr_run)
 
