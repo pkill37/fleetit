@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from random import randint
 from shapely.geometry import LineString
 import json
-import requests
+from kafka import KafkaProducer
 
 
 def findCoordinates(lat, longit, route_range):
@@ -117,9 +117,8 @@ if __name__ == "__main__":
     for run in data_stream['runs']:
         for step in run['steps']:
             print(step)
-            headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
-            payload = {'records': [{'value': step}]}
-            r = requests.post('http://kafka-rest-proxy:8082/topics/test', json=payload, headers=headers)
-            print(r.text)
+
+            producer = KafkaProducer(bootstrap_servers='kafka1:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            producer.send('test', step)
             time.sleep(1)
 
