@@ -7,6 +7,7 @@ from random import randint
 from shapely.geometry import LineString
 import json
 from kafka import KafkaProducer
+import os
 
 
 def findCoordinates(lat, longit, route_range):
@@ -107,7 +108,7 @@ if __name__ == "__main__":
 
             # Send it off to the broker
             print(step)
-            producer = KafkaProducer(bootstrap_servers='kafka1:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_BROKERS'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
             producer.send('test', step)
             time.sleep(1)
 
