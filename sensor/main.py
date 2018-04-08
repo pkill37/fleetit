@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
             # Send it off to the broker
             print(step)
-            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_BROKERS'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
             producer.send('test', step)
             time.sleep(1)
 
