@@ -108,5 +108,16 @@ services:
     build: client
     ports:
       - "80:80"
+    network_mode: host
     depends_on:
       - websocket
+
+  alerts:
+    build: alerts
+    network_mode: host
+    environment:
+      KAFKA_CLUSTER: "localhost:19092,localhost:29092,localhost:39092"
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
