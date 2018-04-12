@@ -53,7 +53,6 @@ if __name__ == "__main__":
     max_num_runs = 50;
 
 
-
     # create 50 random coord
     # max input length of nearest roads
     random_coords  = [(ref_lat + random.random()*route_range,
@@ -79,8 +78,6 @@ if __name__ == "__main__":
         line = LineString(gps_route_key_points)
 
         initial_datetime = datetime.now();
-
-
 
 
         curr_time = initial_datetime
@@ -121,8 +118,8 @@ if __name__ == "__main__":
             curr_co2 += randint(0,10) - 5
             step["co2"] = curr_co2
 
-            curr_temperature = (40 < curr_temperature < -10)* (curr_temperature+randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/1000+\
-                                    (curr_temperature > 40)*40 +  (curr_temperature > -10)*-10
+            curr_temperature = (40 > curr_temperature > -10)* (curr_temperature+ randint(0,24)-((curr_time.hour - 12)**2)**(1/2)/1000)+\
+                                    (curr_temperature > 40)*40 +  (curr_temperature < -10)*-10
 
             step["temp"] = curr_temperature
             
@@ -133,8 +130,8 @@ if __name__ == "__main__":
 
             # Send it off to the broker
             print(step)
-            #producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-            #producer.send('test', step)
+            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            producer.send('test', step)
             time.sleep(sampling_times[i])
 
 
