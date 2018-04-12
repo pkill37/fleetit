@@ -6,8 +6,10 @@ from datetime import datetime, timedelta
 from random import randint
 from shapely.geometry import LineString
 import json
-from kafka import KafkaProducer
+#from kafka import KafkaProducer
 import os
+import functools
+
 
 
 def run_steps(directions_result):
@@ -27,12 +29,15 @@ def run_steps(directions_result):
 
     return duration, gps_route_key_points
 
-def gen_datetime(min_year=2017, max_year=datetime.now().year):
-    # generate a datetime in format yyyy-mm-dd hh:mm:ss.000000
-    start = datetime(min_year, 1, 1, 00, 00, 00)
-    years = max_year - min_year + 1
-    end = start + timedelta(days=365 * years)
-    return start + (end - start) * random.random()
+#generates seq of random numbers such that sum is n
+def random_sum_to(n):
+   a, m, c = [], randint(5, 10), n   
+   while n > m > 0:
+      a.append(m)
+      n -= m
+      m = randint(5, 10) if n > 10 else n
+   if n: a += [n]
+   return a
 
 
 if __name__ == "__main__":
@@ -45,17 +50,18 @@ if __name__ == "__main__":
 
 
     route_range = 2
-    N_runs = 50;
+    max_num_runs = 50;
+
 
 
     # create 50 random coord
     # max input length of nearest roads
     random_coords  = [(ref_lat + random.random()*route_range,
-                        ref_lon + random.random()*route_range) for i in range(N_runs*2)]
+                        ref_lon + random.random()*route_range) for i in range(max_num_runs*2)]
 
     adj_coords =  random_coords#gmaps.neares_roads(random_coords)
 
-    raw_runs = zip(adj_coords[0:N_runs], adj_coords[N_runs:])
+    raw_runs = zip(adj_coords[0:max_num_runs], adj_coords[max_num_runs:])
 
     #for each run
     for run in list(raw_runs): 
@@ -67,53 +73,71 @@ if __name__ == "__main__":
 
         duration, gps_route_key_points = run_steps(directions_result)
 
-        gps_points_dict = gmaps.snap_to_roads(gps_route_key_points, interpolate = True)
+        if len(gps_route_key_points) > 100:
+            continue
 
-        gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
+        line = LineString(gps_route_key_points)
 
-        line = LineString(gps_points_list)
+        initial_datetime = datetime.now();
 
-        initial_datetime = gen_datetime()
+
+
 
         curr_time = initial_datetime
         curr_co2 = randint(400,500)
         curr_temperature = randint(10,25)
+        curr_heart_rate = randint(70,90)
 
-        sample_num = duration//10
 
-        curr_user = randint(0,10**4)
+        sampling_times = random_sum_to(duration)
+        #cumsum of sampling times
+        cum_samp_times = functools.reduce(lambda c, x: c + [c[-1]+x],sampling_times[1:],[sampling_times[0]])
 
-        for i in range(sample_num):
+        curr_bike = randint(0,10**4)
+
+        steps = []
+        for i in range(len(cum_samp_times)):
+
             step = {}
 
-            curr_time = initial_datetime + timedelta(0,10*i)
+            step["bike_id"] = curr_bike
+
+            curr_time = initial_datetime + timedelta(0,cum_samp_times[i])
             step["timestamp"] = curr_time.isoformat()
 
-            curr_point = line.interpolate(line.length/sample_num*i)
+            curr_point = line.interpolate(line.length/duration*cum_samp_times[i])
 
-            # if snapping wasn't possible 
-            #   print(curr_point.x)
-            #print(gps_points_dict)
-            #if not gps_points_dict : 
-            #    continue
+            # highly inefficient, could do this at the end for various points at the same time
+            gps_points_dict = gmaps.snap_to_roads((curr_point.x,curr_point.y))
+            gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
             
-            #gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
+            # sometimes it's just not possible 
+            if not gps_points_list:
+                continue
 
-            step["lat"] = curr_point.x  #gps_points_list[0][0]
-            step["lng"] = curr_point.y  #gps_points_list[0][1]
+            step["lat"] = curr_point.x #gps_points_list[0][0]
+            step["lng"] = curr_point.y #gps_points_list[0][1]  
 
             curr_co2 += randint(0,10) - 5
             step["co2"] = curr_co2
 
-            curr_temperature += (randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/100
+            curr_temperature = (40 < curr_temperature < -10)* (curr_temperature+randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/1000+\
+                                    (curr_temperature > 40)*40 +  (curr_temperature > -10)*-10
 
             step["temp"] = curr_temperature
-
+            
+            step["heart_rate"] =  (curr_heart_rate < 60)*60 + (curr_heart_rate > 100)*100 + \
+                                    (100 > curr_heart_rate > 60)*(curr_heart_rate + randint(0,5)-2);
+            
+            steps.append(step)
 
             # Send it off to the broker
             print(step)
-            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-            producer.send('test', step)
-            time.sleep(1)
+            #producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            #producer.send('test', step)
+            time.sleep(sampling_times[i])
+
+
+
 
 
