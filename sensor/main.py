@@ -90,6 +90,7 @@ if __name__ == "__main__":
         #cumsum of sampling times
         cum_samp_times = functools.reduce(lambda c, x: c + [c[-1]+x],sampling_times[1:],[sampling_times[0]])
 
+
         curr_bike = randint(0,10**4)
 
         steps = []
@@ -108,12 +109,27 @@ if __name__ == "__main__":
             gps_points_dict = gmaps.snap_to_roads((curr_point.x,curr_point.y))
             gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
             
+            
+            if i == 0:
+                origin = gps_points_list[0]
+                speed = 0;
+
+            distance = gmaps.distance_matrix(origins=origin,destinations=gps_points_list[0],mode="bicycling",units="metric")
+            print(distance)
+            origin = gps_points_list[0]
+
+
+            if distance:
+                speed = distance["rows"][0]["elements"][0]["distance"]["value"]/sampling_times[i]
+
+            step["speed"] = speed
+            
             # sometimes it's just not possible 
             if not gps_points_list:
                 continue
 
-            step["lat"] = curr_point.x #gps_points_list[0][0]
-            step["lng"] = curr_point.y #gps_points_list[0][1]  
+            step["lat"] = gps_points_list[0][0]
+            step["lng"] = gps_points_list[0][1]  
 
             curr_co2 += randint(0,10) - 5
             step["co2"] = curr_co2
