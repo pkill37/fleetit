@@ -115,7 +115,6 @@ if __name__ == "__main__":
                 speed = 0;
 
             distance = gmaps.distance_matrix(origins=origin,destinations=gps_points_list[0],mode="bicycling",units="metric")
-            print(distance)
             origin = gps_points_list[0]
 
 
