@@ -13,8 +13,6 @@ from geopy import distance
 from tenacity import retry
 
 
-
-
 def run_steps(directions_result):
     gps_route_key_points = []
 
@@ -34,7 +32,7 @@ def run_steps(directions_result):
 
 #generates seq of random numbers such that sum is n
 def random_sum_to(n):
-   a, m, c = [], randint(5, 10), n   
+   a, m, c = [], randint(5, 10), n
    while n > m > 0:
       a.append(m)
       n -= m
@@ -47,7 +45,7 @@ def retry(fun,keys,current_key):
         try:
           return fun()
         except:
-            current_key = (current_key+1) % len(keys) 
+            current_key = (current_key+1) % len(keys)
             gmaps = googlemaps.Client(key=keys[current_key])
         else:
           break
@@ -55,7 +53,9 @@ def retry(fun,keys,current_key):
         raise Exception
 
 if __name__ == "__main__":
-    keys = ['AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs','AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I','AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U']
+    keys =  \
+    ['AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs','AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I','AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
+     'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk','AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio','AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8']
     current_key = 0
     gmaps = googlemaps.Client(key=keys[current_key])
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     curr_bike = randint(0,10**4)
 
     #for each run
-    for run in list(raw_runs): 
+    for run in list(raw_runs):
 
         directions_result = retry(lambda : gmaps.directions(run[0],run[1],mode="bicycling"),keys,current_key)
         # if points couldn't be snapped
@@ -131,13 +131,13 @@ if __name__ == "__main__":
                                     (curr_temperature > 40)*40 +  (curr_temperature < -10)*-10
 
             step["temp"] = curr_temperature
-            
+
             step["heart_rate"] =  (curr_heart_rate < 60)*60 + (curr_heart_rate > 100)*100 + \
                                     (100 > curr_heart_rate > 60)*(curr_heart_rate + randint(0,5)-2);
-            
+
             steps.append(step)
 
-        
+
         calls_needed = len(steps)//50 + (len(steps)%50 > 0)
 
         #snap to roads and calculate speed
@@ -146,11 +146,11 @@ if __name__ == "__main__":
             end = 50*(i+1) if i != calls_needed-1 else (calls_needed-1)*50 + len(steps) % 50
 
             gps_points_dict =retry(lambda : gmaps.snap_to_roads([(step["lat"], step["lng"]) for step in steps[start:end]]),keys,current_key)
-             
-            
+
+
             gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
-            
-            
+
+
             for j in range(len(gps_points_list)):
                 #if it could snap point
                 steps[start+j]["lat"] = gps_points_list[j][0]
@@ -159,13 +159,13 @@ if __name__ == "__main__":
 
         origins = [(step["lat"], step["lng"]) for step in steps[:-1]]
         destinations = [(step["lat"], step["lng"]) for step in steps[1:]]
-        
+
         #calculate distance
         dist = [0]
         for i in range(len(origins)):
             dist += [ distance.vincenty(origins[i],destinations[i]).m ]
-        
-        
+
+
         # calculate speed and send to kafka
         for i in range(len(steps)):
             steps[i]["speed"] = dist[i]/sampling_times[i]
