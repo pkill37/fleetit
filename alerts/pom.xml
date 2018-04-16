@@ -64,7 +64,7 @@
                             <archive>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <mainClass>com.fleetit.alerts.WordCount</mainClass>
+                                    <mainClass>com.fleetit.alerts.Alerts</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
