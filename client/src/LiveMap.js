@@ -1,10 +1,14 @@
-import React from "react"
-import { compose, withProps } from "recompose"
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+import React from 'react'
+import { compose, withProps } from 'recompose'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
-const Map = compose(
+const KAFKA_TOPIC_UPDATES = 'updates'
+const KAFKA_TOPIC_ALERTS_SPEED = 'alerts-speed'
+const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
+
+const BikeMap = compose(
     withProps({
-        googleMapURL: "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
+        googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
         loadingElement: <div style={{ height: `100%` }} />,
         containerElement: <div style={{ height: `100vh` }} />,
         mapElement: <div style={{ height: `100%` }} />,
@@ -14,45 +18,45 @@ const Map = compose(
 )((props) =>
     <GoogleMap
         defaultZoom={12}
-        center={{ lat: props.lat, lng: props.lng }}
+        defaultCenter={{ lat: 42.51126629307819, lng: -73.21476487152603 }}
     >
-        {props.isMarkerShown && <Marker position={{ lat: props.lat, lng: props.lng }} onClick={props.onMarkerClick} />}
+        {Array.from(props.bikes.values()).map((bike, index) => (
+        <Marker key={index} position={{ lat: bike.lat, lng: bike.lng }} />
+        ))}
     </GoogleMap>
 )
 
 class LiveMap extends React.Component {
     state = {
-        isMarkerShown: false,
-        lat: 0,
-        lng: 0
+        bikes: new Map(),
+        alerts: []
     }
 
     componentDidMount() {
-        this.connection = new WebSocket('ws://localhost:9999/?topic=test')
-
-        this.connection.onmessage = (e) => {
+        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_UPDATES}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
-            console.log(payload)
-            this.setState({
-                isMarkerShown: true,
-                lat: payload.lat,
-                lng: payload.lng
-            })
-        };
-    }
 
-    handleMarkerClick = () => {
-        console.log('click')
+            // Mutate copy of bikes map
+            console.log('hey', Array.from(this.state.bikes.values()))
+            var tmp = new Map(this.state.bikes)
+            tmp.set(payload.bike_id, payload)
+
+            // Update state
+            this.setState({ bikes: tmp })
+        }
+
+        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_SPEED}`)).onmessage = (e) => {
+            var payload = JSON.parse(JSON.parse(e.data)[0].message)
+            console.log('!!!!!!!!! alert', payload)
+            this.setState(prevState => ({
+                alerts: [...prevState.alerts, payload]
+            }))
+        }
     }
 
     render() {
         return (
-            <Map
-                isMarkerShown={this.state.isMarkerShown}
-                onMarkerClick={this.handleMarkerClick}
-                lat={this.state.lat}
-                lng={this.state.lng}
-            />
+            <BikeMap bikes={this.state.bikes} />
         )
     }
 }
