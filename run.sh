@@ -8,4 +8,9 @@ sleep 60
 docker-compose up -d websocket
 docker-compose up -d --scale sensor=10 sensor
 docker-compose up -d alerts
+case $1 in
+    -m|--monotoring)
+    docker-compose up -d elasticsearch kibana kibana_index_pattern logstash logspout metricbeat metricbeat-dashboard-setup
+    ;;
+esac
 docker-compose up -d --build client
