@@ -6,10 +6,11 @@ from datetime import datetime, timedelta
 from random import randint
 from shapely.geometry import LineString
 import json
-#from kafka import KafkaProducer
+from kafka import KafkaProducer
 import os
 import functools
-
+from geopy import distance
+from tenacity import retry
 
 
 def run_steps(directions_result):
@@ -31,7 +32,7 @@ def run_steps(directions_result):
 
 #generates seq of random numbers such that sum is n
 def random_sum_to(n):
-   a, m, c = [], randint(5, 10), n   
+   a, m, c = [], randint(5, 10), n
    while n > m > 0:
       a.append(m)
       n -= m
@@ -39,10 +40,24 @@ def random_sum_to(n):
    if n: a += [n]
    return a
 
+def retry(fun,keys,current_key):
+    for attempt in range(100):
+        try:
+          return fun()
+        except:
+            current_key = (current_key+1) % len(keys)
+            gmaps = googlemaps.Client(key=keys[current_key])
+        else:
+          break
+    else:
+        raise Exception
 
 if __name__ == "__main__":
-    
-    gmaps = googlemaps.Client(key='AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U')
+    keys =  \
+    ['AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs','AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I','AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
+     'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk','AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio','AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8']
+    current_key = 0
+    gmaps = googlemaps.Client(key=keys[current_key])
 
 
     ref_lat = 40.714224
@@ -62,10 +77,12 @@ if __name__ == "__main__":
 
     raw_runs = zip(adj_coords[0:max_num_runs], adj_coords[max_num_runs:])
 
-    #for each run
-    for run in list(raw_runs): 
+    curr_bike = randint(0,10**4)
 
-        directions_result = gmaps.directions(run[0],run[1],mode="bicycling")
+    #for each run
+    for run in list(raw_runs):
+
+        directions_result = retry(lambda : gmaps.directions(run[0],run[1],mode="bicycling"),keys,current_key)
         # if points couldn't be snapped
         if not directions_result:
             continue
@@ -91,7 +108,6 @@ if __name__ == "__main__":
         cum_samp_times = functools.reduce(lambda c, x: c + [c[-1]+x],sampling_times[1:],[sampling_times[0]])
 
 
-        curr_bike = randint(0,10**4)
 
         steps = []
         for i in range(len(cum_samp_times)):
@@ -105,30 +121,8 @@ if __name__ == "__main__":
 
             curr_point = line.interpolate(line.length/duration*cum_samp_times[i])
 
-            # highly inefficient, could do this at the end for various points at the same time
-            gps_points_dict = gmaps.snap_to_roads((curr_point.x,curr_point.y))
-            gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
-            
-            
-            if i == 0:
-                origin = gps_points_list[0]
-                speed = 0;
-
-            distance = gmaps.distance_matrix(origins=origin,destinations=gps_points_list[0],mode="bicycling",units="metric")
-            origin = gps_points_list[0]
-
-
-            if distance:
-                speed = distance["rows"][0]["elements"][0]["distance"]["value"]/sampling_times[i]
-
-            step["speed"] = speed
-            
-            # sometimes it's just not possible 
-            if not gps_points_list:
-                continue
-
-            step["lat"] = gps_points_list[0][0]
-            step["lng"] = gps_points_list[0][1]  
+            step["lat"] = curr_point.x
+            step["lng"] = curr_point.y
 
             curr_co2 += randint(0,10) - 5
             step["co2"] = curr_co2
@@ -137,17 +131,49 @@ if __name__ == "__main__":
                                     (curr_temperature > 40)*40 +  (curr_temperature < -10)*-10
 
             step["temp"] = curr_temperature
-            
+
             step["heart_rate"] =  (curr_heart_rate < 60)*60 + (curr_heart_rate > 100)*100 + \
                                     (100 > curr_heart_rate > 60)*(curr_heart_rate + randint(0,5)-2);
-            
+
             steps.append(step)
 
-            # Send it off to the broker
-            print(step)
-            #producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-            #producer.send('test', step)
+
+        calls_needed = len(steps)//50 + (len(steps)%50 > 0)
+
+        #snap to roads and calculate speed
+        for i in range(calls_needed):
+            start = i*50
+            end = 50*(i+1) if i != calls_needed-1 else (calls_needed-1)*50 + len(steps) % 50
+
+            gps_points_dict =retry(lambda : gmaps.snap_to_roads([(step["lat"], step["lng"]) for step in steps[start:end]]),keys,current_key)
+
+
+            gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
+
+
+            for j in range(len(gps_points_list)):
+                #if it could snap point
+                steps[start+j]["lat"] = gps_points_list[j][0]
+                steps[start+j]["lng"] = gps_points_list[j][1]
+
+
+        origins = [(step["lat"], step["lng"]) for step in steps[:-1]]
+        destinations = [(step["lat"], step["lng"]) for step in steps[1:]]
+
+        #calculate distance
+        dist = [0]
+        for i in range(len(origins)):
+            dist += [ distance.vincenty(origins[i],destinations[i]).m ]
+
+
+        # calculate speed and send to kafka
+        for i in range(len(steps)):
+            steps[i]["speed"] = dist[i]/sampling_times[i]
+            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+            producer.send('test', steps[i])
             time.sleep(sampling_times[i])
+
+
 
 
 
