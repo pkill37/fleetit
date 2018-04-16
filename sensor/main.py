@@ -111,7 +111,6 @@ if __name__ == "__main__":
 
         steps = []
         for i in range(len(cum_samp_times)):
-
             step = {}
 
             step["bike_id"] = curr_bike
@@ -165,17 +164,11 @@ if __name__ == "__main__":
         for i in range(len(origins)):
             dist += [ distance.vincenty(origins[i],destinations[i]).m ]
 
-
         # calculate speed and send to kafka
         for i in range(len(steps)):
+            print(steps[i])
             steps[i]["speed"] = dist[i]/sampling_times[i]
             producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-            producer.send('test', steps[i])
+            producer.send('updates', steps[i])
             time.sleep(sampling_times[i])
-
-
-
-
-
-
 
