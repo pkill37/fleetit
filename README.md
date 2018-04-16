@@ -2,15 +2,23 @@
 
 ## Development
 
+Without monitoring
+
 ```
 ./run.sh
+```
+
+With monitoring
+
+```
+./run.sh -m
 ```
 
 Test websocket
 
 ```
 wscat --connect "ws://localhost:9999/?topic=updates"
-wscat --connect "ws://localhost:9999/?topic=alerts"
+wscat --connect "ws://localhost:9999/?topic=alerts-speed"
 ```
 
 ## Deployment
