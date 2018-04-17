@@ -1,34 +1,40 @@
 package com.fleetit.alerts;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serializer;
+
+import org.apache.kafka.connect.json.JsonDeserializer;
+import org.apache.kafka.connect.json.JsonSerializer;
+
 import org.apache.kafka.streams.*;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.*;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class Alerts {
     public static void main(String[] args) {
+        Serializer<JsonNode> jsonSerializer = new JsonSerializer();
+        Deserializer<JsonNode> jsonDeserializer = new JsonDeserializer();
+        Serde<JsonNode> jsonSerde = Serdes.serdeFrom(jsonSerializer, jsonDeserializer);
+
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "fleetit-alerts");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv("KAFKA_CLUSTER"));
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        final KStream<String, String> updates = builder.stream("updates");
-        //final KStream<String, Update> speedAlerts = updates.filter((k, v) -> v.speed > 3);
-        updates.to("alerts-speed");
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final Topology topology = builder.build();
-        final KafkaStreams streams = new KafkaStreams(topology, props);
-        final CountDownLatch latch = new CountDownLatch(1);
+        KStream<String, JsonNode> updates = builder.stream("updates", Consumed.with(Serdes.String(), jsonSerde));
+        KStream<String, JsonNode> speedAlerts = updates.filter((k, v) -> v.get("speed").asDouble() > 5.0);
+        speedAlerts.to("alerts-speed", Produced.with(Serdes.String(), jsonSerde));
+
+        Topology topology = builder.build();
+        KafkaStreams streams = new KafkaStreams(topology, props);
+        CountDownLatch latch = new CountDownLatch(1);
 
         // attach shutdown handler to catch control-c
         Runtime.getRuntime().addShutdownHook(new Thread("streams-shutdown-hook") {
@@ -45,7 +51,6 @@ public class Alerts {
         } catch (Throwable e) {
             System.exit(1);
         }
-
         System.exit(0);
     }
 }
