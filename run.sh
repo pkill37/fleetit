@@ -7,8 +7,8 @@ docker-compose up -d --build zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2
 # Enable monotoring
 if [ $# -ne 0 ]; then
     case $1 in
-        -m|--monotoring)
-        docker-compose up -d elasticsearch kibana kibana_index_pattern logstash logspout metricbeat metricbeat-dashboard-setup
+        -m|--monitoring)
+        docker-compose up -d --build logstash logspout elasticsearch metricbeat metricbeat-dashboard-setup kibana
         ;;
         *)
         # Default
