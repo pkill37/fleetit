@@ -5,7 +5,6 @@ const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
 
 class Alerts extends React.Component {
     state = {
-        bikes: new Map(),
         alerts: []
     }
 
