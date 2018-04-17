@@ -53,9 +53,15 @@ def retry(fun,keys,current_key):
         raise Exception
 
 if __name__ == '__main__':
-    keys =  \
-    ['AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs','AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I','AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
-     'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk','AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio','AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8']
+    keys = [
+        'AIzaSyAc341aCRT8ZPH57Y9y_Tpjiu0CzStPEQU',
+        'AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs',
+        'AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I',
+        'AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
+        'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk',
+        'AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio',
+        'AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8'
+    ]
     current_key = 0
     gmaps = googlemaps.Client(key=keys[current_key])
     producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
@@ -167,8 +173,8 @@ if __name__ == '__main__':
 
         # calculate speed and send to kafka
         for i in range(len(steps)):
-            print(steps[i])
             steps[i]['speed'] = dist[i]/sampling_times[i]
+            print(steps[i])
             producer.send('updates', steps[i])
             time.sleep(sampling_times[i])
 
