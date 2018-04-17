@@ -11,25 +11,25 @@ const Header = () => (
 		<div style={{width: "100%", height:"100vh"}}>
 			<ul className="navbar-nav navbar-sidenav navbar-dark">
 				<li className='nav-item'>
-					<a className="nav-link">
+					<div className="nav-link">
 						<i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>my_location</i>
-						<Link to='/' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>My Location</Link>
-					</a>
+						<Link to='/' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>Live Map</Link>
+					</div>
 				</li>
 				<li className='nav-item'>
-					<a className="nav-link">
-						<i class="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>history</i>
-						<Link to='/history' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>History</Link>
-					</a>
-				</li>
-				<li className='nav-item'>
-					<a className="nav-link">
-						<i class="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>notifications</i>
+					<div className="nav-link">
+						<i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>notifications</i>
 						<Link to='/alerts' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>Alerts</Link>
-					</a>
+					</div>
+				</li>
+				<li className='nav-item'>
+					<div className="nav-link">
+						<i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>history</i>
+						<Link to='/history' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>History</Link>
+					</div>
 				</li>
 			</ul>
-		</div>	
+		</div>
 	</nav>
   </header>
 )
