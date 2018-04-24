@@ -6,13 +6,11 @@ from datetime import datetime, timedelta
 from random import randint
 from shapely.geometry import LineString
 import json
-from kafka import KafkaProducer
 import os
 import functools
 from geopy import distance
 from tenacity import retry
-
-
+import pickle
 
 
 def run_steps(directions_result):
@@ -43,7 +41,7 @@ def random_sum_to(n):
    return a
 
 def retry(fun,keys,current_key):
-    for attempt in range(100):
+    for attempt in range(len(keys)):
         try:
           return fun()
         except:
@@ -55,7 +53,22 @@ def retry(fun,keys,current_key):
         raise Exception
 
 if __name__ == "__main__":
-    keys = ['AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs','AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I','AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U']
+    keys = [
+    	'AIzaSyAbLkQnfFb_fEabAUmBae7Vjy198_TKa1Q',
+    	'AIzaSyB-mQeTrkASiglFPh8tr_VhoVs316ZpdGU',
+    	'AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs',
+    	'AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I',
+    	'AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U'
+        'AIzaSyAN-mH1CrjLy3MWN7L1HFKoonnTwdBREhk',
+        'AIzaSyAc341aCRT8ZPH57Y9y_Tpjiu0CzStPEQU',
+        'AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs',
+        'AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I',
+        'AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
+        'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk',
+        'AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio',
+        'AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8'
+    ]
+
     current_key = 0
     gmaps = googlemaps.Client(key=keys[current_key])
 
@@ -64,8 +77,8 @@ if __name__ == "__main__":
     ref_lon = -73.961452
 
 
-    route_range = 2
-    max_num_runs = 50;
+    route_range = 1
+    max_num_runs = 50
 
 
     # create 50 random coord
@@ -77,13 +90,21 @@ if __name__ == "__main__":
 
     raw_runs = zip(adj_coords[0:max_num_runs], adj_coords[max_num_runs:])
 
-    curr_bike = randint(0,10**4)
-
+    n_run = 0
+    run_data = []
     #for each run
-    for run in list(raw_runs): 
+    key_timeout = False
 
-        directions_result = retry(lambda : gmaps.directions(run[0],run[1],mode="bicycling"),keys,current_key)
-        # if points couldn't be snapped
+    for run in list(raw_runs): 
+        curr_bike = randint(0,10**4)
+
+
+        try:
+            directions_result = retry(lambda : gmaps.directions(run[0],run[1],mode="bicycling"),keys,current_key)
+        except: 
+            print("Key timeout occured")
+            key_timeout = True
+            break
         if not directions_result:
             continue
 
@@ -101,13 +122,13 @@ if __name__ == "__main__":
         curr_co2 = randint(400,500)
         curr_temperature = randint(10,25)
         curr_heart_rate = randint(70,90)
-
+        curr_battery = 50*random.random()+50 # in %
+        battery_aut = 133920 #3 months
+        curr_battery_aut =  curr_battery * battery_aut # in seconds
 
         sampling_times = random_sum_to(duration)
         #cumsum of sampling times
         cum_samp_times = functools.reduce(lambda c, x: c + [c[-1]+x],sampling_times[1:],[sampling_times[0]])
-
-
 
         steps = []
         for i in range(len(cum_samp_times)):
@@ -116,27 +137,24 @@ if __name__ == "__main__":
 
             step["bike_id"] = curr_bike
 
-            curr_time = initial_datetime + timedelta(0,cum_samp_times[i])
+            delta = timedelta(0,cum_samp_times[i])
+
+            curr_time = initial_datetime + delta
             step["timestamp"] = curr_time.isoformat()
-
             curr_point = line.interpolate(line.length/duration*cum_samp_times[i])
-
             step["lat"] = curr_point.x
             step["lng"] = curr_point.y
-
             curr_co2 += randint(0,10) - 5
             step["co2"] = curr_co2
-
             curr_temperature = (40 > curr_temperature > -10)* (curr_temperature+ (randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/1000) +\
                                     (curr_temperature > 40)*40 +  (curr_temperature < -10)*-10
-
             step["temp"] = curr_temperature
-            
             step["heart_rate"] =  (curr_heart_rate < 60)*60 + (curr_heart_rate > 100)*100 + \
                                     (100 > curr_heart_rate > 60)*(curr_heart_rate + randint(0,5)-2);
-            
-            steps.append(step)
+            curr_battery_aut = curr_battery_aut - delta.seconds
+            step["battery"] = curr_battery_aut / battery_aut 
 
+            steps.append(step)
         
         calls_needed = len(steps)//50 + (len(steps)%50 > 0)
 
@@ -145,17 +163,22 @@ if __name__ == "__main__":
             start = i*50
             end = 50*(i+1) if i != calls_needed-1 else (calls_needed-1)*50 + len(steps) % 50
 
-            gps_points_dict =retry(lambda : gmaps.snap_to_roads([(step["lat"], step["lng"]) for step in steps[start:end]]),keys,current_key)
-             
-            
+            try:
+                gps_points_dict = retry(lambda : gmaps.snap_to_roads([(step["lat"], step["lng"]) for step in steps[start:end]]),keys,current_key)
+            except:
+                print("Key timeout occured")
+                key_timeout = True
+                break
+
             gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
-            
             
             for j in range(len(gps_points_list)):
                 #if it could snap point
                 steps[start+j]["lat"] = gps_points_list[j][0]
                 steps[start+j]["lng"] = gps_points_list[j][1]
 
+        if key_timeout:
+            break
 
         origins = [(step["lat"], step["lng"]) for step in steps[:-1]]
         destinations = [(step["lat"], step["lng"]) for step in steps[1:]]
@@ -165,13 +188,22 @@ if __name__ == "__main__":
         for i in range(len(origins)):
             dist += [ distance.vincenty(origins[i],destinations[i]).m ]
         
-        
         # calculate speed and send to kafka
         for i in range(len(steps)):
             steps[i]["speed"] = dist[i]/sampling_times[i]
-            producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-            producer.send('test', steps[i])
-            time.sleep(sampling_times[i])
+        
+        print("finishing run...", n_run)
+        run_data.append(steps)
+        n_run += 1
+
+
+    with open("saved_runs", "a+") as outfile:
+        json.dump(run_data, outfile) 
+        outfile.write("\n")
+        
+
+            
+        
 
 
 
