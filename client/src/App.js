@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
-import LiveMap from './LiveMap';
+import React from 'react';
+import Header from './Header';
+import Main from './Main';
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <LiveMap/>
-      </div>
-    );
-  }
-}
+const App = () => (
+	<div>
+		<Header/>
+		<Main/>
+	</div>
+);
 
 export default App;
