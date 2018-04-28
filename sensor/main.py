@@ -1,213 +1,29 @@
-import googlemaps
-import math
-import random
-import time
-from datetime import datetime, timedelta
-from random import randint
-from shapely.geometry import LineString
+from kafka import KafkaProducer
 import json
+import dateutil.parser
+import time
+import datetime
 import os
-import functools
-from geopy import distance
-from tenacity import retry
-import pickle
 
+producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
-def run_steps(directions_result):
-    gps_route_key_points = []
+with open("runs.json", "r") as f:
+    # line will have up to 50 runs max
+    for line in f:
+        runs = json.loads(line)
 
-    start_location = directions_result[0]["legs"][0]["start_location"]
+        #actual run to send to sensor
+        #difference between now and sensor timestamp
+        for run in runs:
+            timestamp_delta = datetime.datetime.now() - dateutil.parser.parse(run[0]["timestamp"])
 
-    # in seconds
-    duration = directions_result[0]["legs"][0]["duration"]["value"]
+            sampling_times = [(dateutil.parser.parse(run[step_idx+1]["timestamp"]) - dateutil.parser.parse(run[step_idx]["timestamp"])).seconds for step_idx in range(len(run)-1)]
+            sampling_times.append(0)
+            for i in range(len(run)):
+                # update timestamp
+                run[i]["timestamp"] = (dateutil.parser.parse(run[i]["timestamp"]) + timestamp_delta).isoformat()
 
-    steps = directions_result[0]["legs"][0]["steps"]
-
-    gps_route_key_points.append((start_location["lat"],start_location["lng"]))
-
-    for step in steps:
-        gps_route_key_points.append((step["end_location"]["lat"], step["end_location"]["lng"]))
-
-    return duration, gps_route_key_points
-
-#generates seq of random numbers such that sum is n
-def random_sum_to(n):
-   a, m, c = [], randint(5, 10), n   
-   while n > m > 0:
-      a.append(m)
-      n -= m
-      m = randint(5, 10) if n > 10 else n
-   if n: a += [n]
-   return a
-
-def retry(fun,keys,current_key):
-    for attempt in range(len(keys)):
-        try:
-          return fun()
-        except:
-            current_key = (current_key+1) % len(keys) 
-            gmaps = googlemaps.Client(key=keys[current_key])
-        else:
-          break
-    else:
-        raise Exception
-
-if __name__ == "__main__":
-    keys = [
-    	'AIzaSyAbLkQnfFb_fEabAUmBae7Vjy198_TKa1Q',
-    	'AIzaSyB-mQeTrkASiglFPh8tr_VhoVs316ZpdGU',
-    	'AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs',
-    	'AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I',
-    	'AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U'
-        'AIzaSyAN-mH1CrjLy3MWN7L1HFKoonnTwdBREhk',
-        'AIzaSyAc341aCRT8ZPH57Y9y_Tpjiu0CzStPEQU',
-        'AIzaSyBjxit6qbs3cGgWInutRfXFPD1wxU9lkTs',
-        'AIzaSyDzFr5yLuA2p7APr2JTGHTYPm35x5pVT8I',
-        'AIzaSyDvvzzLQDXxwl4wtI6P94lEChNnKz4Af9U',
-        'AIzaSyDbjP1Zbd8p6fVEpLbVbccg7IEMg8eBeUk',
-        'AIzaSyBYCanqeNcu4toOW8M7FHrfdydn1XJIkio',
-        'AIzaSyBCh5v8Jl_UTvcgevn_ErqTKVqLR4HqDm8'
-    ]
-
-    current_key = 0
-    gmaps = googlemaps.Client(key=keys[current_key])
-
-
-    ref_lat = 40.714224
-    ref_lon = -73.961452
-
-
-    route_range = 1
-    max_num_runs = 50
-
-
-    # create 50 random coord
-    # max input length of nearest roads
-    random_coords  = [(ref_lat + random.random()*route_range,
-                        ref_lon + random.random()*route_range) for i in range(max_num_runs*2)]
-
-    adj_coords =  random_coords#gmaps.neares_roads(random_coords)
-
-    raw_runs = zip(adj_coords[0:max_num_runs], adj_coords[max_num_runs:])
-
-    n_run = 0
-    run_data = []
-    #for each run
-    key_timeout = False
-
-    for run in list(raw_runs): 
-        curr_bike = randint(0,10**4)
-
-
-        try:
-            directions_result = retry(lambda : gmaps.directions(run[0],run[1],mode="bicycling"),keys,current_key)
-        except: 
-            print("Key timeout occured")
-            key_timeout = True
-            break
-        if not directions_result:
-            continue
-
-        duration, gps_route_key_points = run_steps(directions_result)
-
-        if len(gps_route_key_points) > 100:
-            continue
-
-        line = LineString(gps_route_key_points)
-
-        initial_datetime = datetime.now();
-
-
-        curr_time = initial_datetime
-        curr_co2 = randint(400,500)
-        curr_temperature = randint(10,25)
-        curr_heart_rate = randint(70,90)
-        curr_battery = 50*random.random()+50 # in %
-        battery_aut = 133920 #3 months
-        curr_battery_aut =  curr_battery * battery_aut # in seconds
-
-        sampling_times = random_sum_to(duration)
-        #cumsum of sampling times
-        cum_samp_times = functools.reduce(lambda c, x: c + [c[-1]+x],sampling_times[1:],[sampling_times[0]])
-
-        steps = []
-        for i in range(len(cum_samp_times)):
-
-            step = {}
-
-            step["bike_id"] = curr_bike
-
-            delta = timedelta(0,cum_samp_times[i])
-
-            curr_time = initial_datetime + delta
-            step["timestamp"] = curr_time.isoformat()
-            curr_point = line.interpolate(line.length/duration*cum_samp_times[i])
-            step["lat"] = curr_point.x
-            step["lng"] = curr_point.y
-            curr_co2 += randint(0,10) - 5
-            step["co2"] = curr_co2
-            curr_temperature = (40 > curr_temperature > -10)* (curr_temperature+ (randint(0,24)-((curr_time.hour - 12)**2)**(1/2))/1000) +\
-                                    (curr_temperature > 40)*40 +  (curr_temperature < -10)*-10
-            step["temp"] = curr_temperature
-            step["heart_rate"] =  (curr_heart_rate < 60)*60 + (curr_heart_rate > 100)*100 + \
-                                    (100 > curr_heart_rate > 60)*(curr_heart_rate + randint(0,5)-2);
-            curr_battery_aut = curr_battery_aut - delta.seconds
-            step["battery"] = curr_battery_aut / battery_aut 
-
-            steps.append(step)
-        
-        calls_needed = len(steps)//50 + (len(steps)%50 > 0)
-
-        #snap to roads and calculate speed
-        for i in range(calls_needed):
-            start = i*50
-            end = 50*(i+1) if i != calls_needed-1 else (calls_needed-1)*50 + len(steps) % 50
-
-            try:
-                gps_points_dict = retry(lambda : gmaps.snap_to_roads([(step["lat"], step["lng"]) for step in steps[start:end]]),keys,current_key)
-            except:
-                print("Key timeout occured")
-                key_timeout = True
-                break
-
-            gps_points_list = [ (item["location"]["latitude"], item["location"]["longitude"]) for item in gps_points_dict ]
-            
-            for j in range(len(gps_points_list)):
-                #if it could snap point
-                steps[start+j]["lat"] = gps_points_list[j][0]
-                steps[start+j]["lng"] = gps_points_list[j][1]
-
-        if key_timeout:
-            break
-
-        origins = [(step["lat"], step["lng"]) for step in steps[:-1]]
-        destinations = [(step["lat"], step["lng"]) for step in steps[1:]]
-        
-        #calculate distance
-        dist = [0]
-        for i in range(len(origins)):
-            dist += [ distance.vincenty(origins[i],destinations[i]).m ]
-        
-        # calculate speed and send to kafka
-        for i in range(len(steps)):
-            steps[i]["speed"] = dist[i]/sampling_times[i]
-        
-        print("finishing run...", n_run)
-        run_data.append(steps)
-        n_run += 1
-
-
-    with open("saved_runs", "a+") as outfile:
-        json.dump(run_data, outfile) 
-        outfile.write("\n")
-        
-
-            
-        
-
-
-
-
-
-
+                print(run[i])
+                producer.send('updates', run[i])
+                time.sleep(sampling_times[i])
 

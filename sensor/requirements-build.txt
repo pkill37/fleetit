@@ -1,0 +1,4 @@
+googlemaps==2.5.1
+Shapely==1.6.4.post1
+geopy==1.11.0
+tenacity==4.10.0
