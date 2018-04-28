@@ -30,7 +30,12 @@ public class Alerts {
 
         KStream<String, JsonNode> updates = builder.stream("updates", Consumed.with(Serdes.String(), jsonSerde));
         KStream<String, JsonNode> speedAlerts = updates.filter((k, v) -> v.get("speed").asDouble() > 5.0);
+        KStream<String, JsonNode> heartRateAlerts = updates.filter((k, v) -> v.get("speed").asInt() > 90);
+        KStream<String, JsonNode> batteryAlerts = updates.filter((k, v) -> v.get("battery").asDouble() <= 20.0);
+
         speedAlerts.to("alerts-speed", Produced.with(Serdes.String(), jsonSerde));
+        heartRateAlerts.to("alerts-heart-rate", Produced.with(Serdes.String(), jsonSerde));
+        batteryAlerts.to("alerts-battery", Produced.with(Serdes.String(), jsonSerde));
 
         Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, props);
