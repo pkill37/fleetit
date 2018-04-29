@@ -13,14 +13,52 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.sql.*;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Component
 public class AlertsProcessor implements CommandLineRunner {
+    // TODO: refactor to environment variables
+    private static final String POSTGRES_URL = "jdbc:postgresql://postgres/fleetit";
+    private static final String POSTGRES_USER = "root";
+    private static final String POSTGRES_PASS = "demo1234";
+
     @Override
     public void run(String... args) throws Exception {
         main(args);
+    }
+
+    private static void persist(JsonNode json) {
+        String query = "INSERT INTO updates(bike_id, timestamp, lat, lng, co2, temp, heart_rate, battery, speed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        int bikeId = json.get("bike_id").asInt();
+        String timestamp = json.get("timestamp").asText();
+        double lat = json.get("lat").asDouble();
+        double lng = json.get("lng").asDouble();
+        int co2 = json.get("co2").asInt();
+        double temp = json.get("temp").asDouble();
+        int heartRate = json.get("heart_rate").asInt();
+        double battery = json.get("battery").asInt();
+        double speed = json.get("speed").asInt();
+
+        try (Connection con = DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASS);
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, bikeId);
+            pst.setString(2, timestamp);
+            pst.setDouble(3, lat);
+            pst.setDouble(4, lng);
+            pst.setInt(5, co2);
+            pst.setDouble(6, temp);
+            pst.setInt(7, heartRate);
+            pst.setDouble(8, battery);
+            pst.setDouble(9, speed);
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(AlertsProcessor.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
     public static void main(String[] args) {
@@ -39,6 +77,9 @@ public class AlertsProcessor implements CommandLineRunner {
         KStream<String, JsonNode> speedAlerts = updates.filter((k, v) -> v.get("speed").asDouble() > 5.0);
         KStream<String, JsonNode> heartRateAlerts = updates.filter((k, v) -> v.get("heart_rate").asInt() > 85);
         KStream<String, JsonNode> batteryAlerts = updates.filter((k, v) -> v.get("battery").asDouble() < 50.0);
+
+        // Persist updates to PostgreSQL
+        updates.foreach((k,v) -> persist(v));
 
         speedAlerts.to("alerts-speed", Produced.with(Serdes.String(), jsonSerde));
         heartRateAlerts.to("alerts-heart-rate", Produced.with(Serdes.String(), jsonSerde));
