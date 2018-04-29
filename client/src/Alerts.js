@@ -1,13 +1,15 @@
 import React from 'react';
 
 const KAFKA_TOPIC_ALERTS_SPEED = 'alerts-speed'
-const KAFKA_TOPIC_ALERTS_HEART = 'alerts-heart'
+const KAFKA_TOPIC_ALERTS_HEART = 'alerts-heart-rate'
+const KAFKA_TOPIC_ALERTS_BATTERY = 'alerts-battery'
 const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
 
 class Alerts extends React.Component {
     state = {
         speed: [],
-        heart: []
+        heart: [],
+        battery: []
     }
 
     componentDidMount() {
@@ -28,6 +30,15 @@ class Alerts extends React.Component {
                 heart: [...prevState.heart, payload]
             }))
         }
+
+        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_BATTERY}`)).onmessage = (e) => {
+            var payload = JSON.parse(JSON.parse(e.data)[0].message)
+            console.log('!!!!!!!!! battery alert', payload)
+
+            this.setState(prevState => ({
+                battery: [...prevState.battery, payload]
+            }))
+        }
     }
 
     render() {
@@ -37,6 +48,7 @@ class Alerts extends React.Component {
                     <i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>report_problem</i>
                     <h1 style={{display: "inline-block", verticalAlign: "middle", marginLeft: "15px"}}>Alerts</h1>
                 </div>
+
                 <h2>Speed Alerts</h2>
                 <ul>
                 {this.state.speed.map((s, index) => (
@@ -48,6 +60,13 @@ class Alerts extends React.Component {
                 <ul>
                 {this.state.heart.map((h, index) => (
                     <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} km/h</li>
+                ))}
+                </ul>
+
+                <h2>Battery Alerts</h2>
+                <ul>
+                {this.state.battery.map((b, index) => (
+                    <li key={index}>Bike #{b.bike_id} is on low battery ({b.battery}%)</li>
                 ))}
                 </ul>
             </div>
