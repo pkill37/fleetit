@@ -1,8 +1,9 @@
-version: '2'
+version: '3'
 
 services:
   zookeeper-1:
     image: confluentinc/cp-zookeeper:latest
+    restart: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 22181
@@ -13,6 +14,7 @@ services:
 
   zookeeper-2:
     image: confluentinc/cp-zookeeper:latest
+    restart: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_CLIENT_PORT: 32181
@@ -23,6 +25,7 @@ services:
 
   zookeeper-3:
     image: confluentinc/cp-zookeeper:latest
+    restart: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_CLIENT_PORT: 42181
@@ -33,6 +36,7 @@ services:
 
   kafka-1:
     image: confluentinc/cp-kafka:latest
+    restart: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -44,6 +48,7 @@ services:
 
   kafka-2:
     image: confluentinc/cp-kafka:latest
+    restart: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -55,6 +60,7 @@ services:
 
   kafka-3:
     image: confluentinc/cp-kafka:latest
+    restart: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -76,6 +82,7 @@ services:
 
   websocket:
     build: websocket
+    restart: on-failure
     ports:
       - "9999:9999"
     environment:
@@ -87,6 +94,7 @@ services:
 
   client:
     build: client
+    restart: on-failure
     ports:
       - "80:80"
     depends_on:
@@ -94,6 +102,7 @@ services:
 
   postgres:
     image: postgres
+    restart: on-failure
     ports:
       - "5432:5432"
     environment:
@@ -103,6 +112,7 @@ services:
 
   alerts:
     build: alerts
+    restart: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
     depends_on:
