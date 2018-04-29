@@ -2,7 +2,7 @@
 set -eu
 
 docker-compose down --volumes --remove-orphans
-docker-compose build zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3 websocket sensor alerts
+docker-compose build zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3 websocket sensor postgres alerts
 docker-compose up -d zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3
 
 # Enable monotoring
@@ -21,5 +21,6 @@ echo "Waiting 60 sec for kafka to set up..."
 sleep 60
 docker-compose up -d websocket
 docker-compose up -d --scale sensor=5 sensor
+docker-compose up -d postgres
 docker-compose up -d alerts
 #docker-compose up -d client

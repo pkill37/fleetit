@@ -113,6 +113,15 @@ services:
     depends_on:
       - websocket
 
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "demo1234"
+      POSTGRES_DB: fleetit
+
   alerts:
     build: alerts
     network_mode: host
