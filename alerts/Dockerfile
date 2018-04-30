@@ -9,5 +9,5 @@ RUN mvn clean package
 FROM openjdk:9-jre-slim
 WORKDIR /app
 COPY --from=build /app/target/ /app
-CMD ["java", "-jar", "alerts-0.0.1-jar-with-dependencies.jar"]
+CMD ["java", "-jar", "alerts-0.0.1.jar"]
 
