@@ -1,5 +1,2 @@
-googlemaps==2.5.1
-Shapely==1.6.4.post1
 kafka-python==1.4.2
-geopy==1.11.0
-tenacity==4.10.0
+python-dateutil==2.7.2

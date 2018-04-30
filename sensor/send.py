@@ -1,9 +1,10 @@
-import kafka
+from kafka import KafkaProducer
 import json
 import dateutil.parser
 import time
 import datetime
 import random
+import os
 
 producer = KafkaProducer(bootstrap_servers=os.environ['KAFKA_CLUSTER'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
