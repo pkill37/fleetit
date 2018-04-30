@@ -35,7 +35,7 @@ public class AlertsProcessor implements CommandLineRunner {
         String query = "INSERT INTO updates(bike_id, timestamp, lat, lng, co2, temp, heart_rate, battery, speed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         int bikeId = json.get("bike_id").asInt();
-        String timestamp = json.get("timestamp").asText();
+        Timestamp timestamp = Timestamp.valueOf(json.get("timestamp").asText());
         double lat = json.get("lat").asDouble();
         double lng = json.get("lng").asDouble();
         int co2 = json.get("co2").asInt();
@@ -47,7 +47,7 @@ public class AlertsProcessor implements CommandLineRunner {
         try (Connection con = DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASS);
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, bikeId);
-            pst.setString(2, timestamp);
+            pst.setTimestamp(2, timestamp);
             pst.setDouble(3, lat);
             pst.setDouble(4, lng);
             pst.setInt(5, co2);

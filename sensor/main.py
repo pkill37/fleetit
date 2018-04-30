@@ -21,7 +21,7 @@ with open("runs.json", "r") as f:
             sampling_times.append(0)
             for i in range(len(run)):
                 # update timestamp
-                run[i]["timestamp"] = (dateutil.parser.parse(run[i]["timestamp"]) + timestamp_delta).isoformat()
+                run[i]["timestamp"] = (dateutil.parser.parse(run[i]["timestamp"]) + timestamp_delta).strftime("%Y-%m-%d %H:%M:%S")
 
                 print(run[i])
                 producer.send('updates', run[i])

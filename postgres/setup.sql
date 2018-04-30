@@ -1,7 +1,7 @@
 CREATE TABLE updates(
     id SERIAL PRIMARY KEY,
     bike_id INTEGER NOT NULL,
-    timestamp CHARACTER(255) NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
     lat REAL NOT NULL,
     lng REAL NOT NULL,
     co2 INTEGER NOT NULL,
