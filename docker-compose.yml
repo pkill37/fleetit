@@ -156,14 +156,16 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
 
   metricbeat:
-    image: docker.elastic.co/beats/metricbeat:5.6.3
+    build:
+      context: monitoring/metricbeat/
     volumes:
        - /var/run/docker.sock:/tmp/docker.sock
     depends_on:
       - elasticsearch
 
   metricbeat-dashboard-setup:
-    image: docker.elastic.co/beats/metricbeat:5.6.3
+    build:
+      context: monitoring/metricbeat/
     command: ./scripts/import_dashboards -es http://elasticsearch:9200
     depends_on:
       - elasticsearch
