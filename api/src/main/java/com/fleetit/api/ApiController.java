@@ -1,8 +1,5 @@
 package com.fleetit.api;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
@@ -12,54 +9,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1")
 public class ApiController {
-    public static class Update {
-        private int bikeId;
-        private Timestamp timestamp;
-        private double lat;
-        private double lng;
-        private int co2;
-        private double temp;
-        private int heartRate;
-        private double battery;
-        private double speed;
-
-        public Update(int bikeId, Timestamp timestamp, double lat, double lng, int co2, double temp, int heartRate, double battery, double speed) {
-            this.bikeId = bikeId;
-            this.timestamp = timestamp;
-            this.lat = lat;
-            this.lng = lng;
-            this.co2 = co2;
-            this.temp = temp;
-            this.heartRate = heartRate;
-            this.battery = battery;
-            this.speed = speed;
-        }
-
-        @Override
-        public String toString() {
-            return "Update{" +
-                    "bikeId=" + bikeId +
-                    ", timestamp=" + timestamp +
-                    ", lat=" + lat +
-                    ", lng=" + lng +
-                    ", co2=" + co2 +
-                    ", temp=" + temp +
-                    ", heartRate=" + heartRate +
-                    ", battery=" + battery +
-                    ", speed=" + speed +
-                    '}';
-        }
-    }
-
     // TODO: refactor to environment variables
     private static final String POSTGRES_URL = "jdbc:postgresql://postgres/fleetit";
     private static final String POSTGRES_USER = "root";
     private static final String POSTGRES_PASS = "demo1234";
 
     private static Update getBikeStats(int bikeId) {
-        final String query = "SELECT bike_id, AVG(lat), AVG(lng), AVG(co2), AVG(temp), AVG(heart_rate), AVG(battery), AVG(speed) FROM updates WHERE bike_id = ? GROUP BY bike_id";
+        final String query = "SELECT bike_id, now() AS timestamp, AVG(lat) AS lat, AVG(lng) AS lng, AVG(co2) AS co2, AVG(temp) AS temp, AVG(heart_rate) AS heart_rate, AVG(battery) AS battery, AVG(speed) AS speed FROM updates WHERE bike_id = ? GROUP BY bike_id";
         Update u = null;
 
         try (Connection con = DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASS)) {
@@ -102,16 +61,15 @@ public class ApiController {
         return updates;
     }
 
-    @RequestMapping(value = "/bike/{id}/stats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/bike/{id}/stats")
     @ResponseBody
-    @JsonSerialize
-    public ResponseEntity<Update> stats(@PathVariable("id") int id) {
-        return ResponseEntity.ok(getBikeStats(id));
+    public Update stats(@PathVariable("id") int id) {
+        return getBikeStats(id);
     }
 
-    @RequestMapping(value = "/bike/{id}/last/{days}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/bike/{id}/last/{days}")
     @ResponseBody
-    public ResponseEntity<List<Update>> last(@PathVariable("id") int id, @PathVariable("days") int days) {
-        return ResponseEntity.ok(getLastDaysOfBike(id, days));
+    public List<Update> last(@PathVariable("id") int id, @PathVariable("days") int days) {
+        return getLastDaysOfBike(id, days);
     }
 }
