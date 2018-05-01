@@ -21,10 +21,9 @@ import java.util.logging.Logger;
 
 @Component
 public class AlertsProcessor implements CommandLineRunner {
-    // TODO: refactor to environment variables
-    private static final String POSTGRES_URL = "jdbc:postgresql://postgres/fleetit";
-    private static final String POSTGRES_USER = "root";
-    private static final String POSTGRES_PASS = "demo1234";
+    private static final String POSTGRES_URL = "jdbc:postgresql://" + System.getenv("POSTGRES_HOST") + "/" + System.getenv("POSTGRES_DB");
+    private static final String POSTGRES_USER = System.getenv("POSTGRES_USER");
+    private static final String POSTGRES_PASSWORD = System.getenv("POSTGRES_PASSWORD");
 
     @Override
     public void run(String... args) throws Exception {
@@ -44,7 +43,7 @@ public class AlertsProcessor implements CommandLineRunner {
         double battery = json.get("battery").asInt();
         double speed = json.get("speed").asInt();
 
-        try (Connection con = DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASS);
+        try (Connection con = DriverManager.getConnection(POSTGRES_URL, POSTGRES_USER, POSTGRES_PASSWORD);
              PreparedStatement pst = con.prepareStatement(query)) {
             pst.setInt(1, bikeId);
             pst.setTimestamp(2, timestamp);
@@ -79,7 +78,7 @@ public class AlertsProcessor implements CommandLineRunner {
         KStream<String, JsonNode> batteryAlerts = updates.filter((k, v) -> v.get("battery").asDouble() < 50.0);
 
         // Persist updates to PostgreSQL
-        updates.foreach((k,v) -> persist(v));
+        updates.foreach((k, v) -> persist(v));
 
         speedAlerts.to("alerts-speed", Produced.with(Serdes.String(), jsonSerde));
         heartRateAlerts.to("alerts-heart-rate", Produced.with(Serdes.String(), jsonSerde));

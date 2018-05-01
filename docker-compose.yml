@@ -108,7 +108,7 @@ services:
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
-      POSTGRES_DB: fleetit
+      POSTGRES_DB: "fleetit"
 
   api:
     build: api
@@ -118,7 +118,8 @@ services:
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
-      POSTGRES_DB: fleetit
+      POSTGRES_DB: "fleetit"
+      POSTGRES_HOST: "postgres"
     depends_on:
       - postgres
 
@@ -127,6 +128,10 @@ services:
     restart: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "demo1234"
+      POSTGRES_DB: "fleetit"
+      POSTGRES_HOST: "postgres"
     depends_on:
       - kafka-1
       - kafka-2
