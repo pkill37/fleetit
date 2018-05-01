@@ -172,15 +172,10 @@ services:
   metricbeat:
     build:
       context: monitoring/metricbeat/
+    restart: on-failure
     volumes:
+       - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
-    depends_on:
-      - elasticsearch
-
-  metricbeat-dashboard-setup:
-    build:
-      context: monitoring/metricbeat/
-    command: ./scripts/import_dashboards -es http://elasticsearch:9200
     depends_on:
       - elasticsearch
 
