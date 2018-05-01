@@ -72,7 +72,7 @@ services:
 
   sensor:
     build: sensor
-    restart: on-failure
+    restart: always
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
     depends_on:
