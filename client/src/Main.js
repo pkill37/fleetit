@@ -8,10 +8,10 @@ import Detail from './Detail';
 const Main = () => (
 	<main>
 		<Switch>
-		    <Route exact path='/' component={Home}/>
-		    <Route exact path='/history' component={History}/>
-		    <Route exact path='/alerts' component={Alerts}/>
-		    <Route exact path='/detail/8925' component={Detail}/>
+		    <Route exact path='/' component={Home} />
+		    <Route exact path='/history' component={History} />
+		    <Route exact path='/alerts' component={Alerts} />
+		    <Route path='/detail/:id' component={Detail} />
 		</Switch>
 	</main>
 )
