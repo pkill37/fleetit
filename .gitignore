@@ -1,4 +1,6 @@
 **/.idea/*
+package-lock.json
+
 
 # Created by https://www.gitignore.io/api/windows,linux,osx,vim,emacs,webstorm,sublimetext,visualstudiocode,java,maven,gradle,python,eclipse,netbeans,intellij
 
