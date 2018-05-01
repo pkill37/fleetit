@@ -9,7 +9,7 @@ docker-compose up -d zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3
 if [ $# -ne 0 ]; then
     case $1 in
         -m|--monitoring)
-        docker-compose up -d --build logstash logspout elasticsearch metricbeat metricbeat-dashboard-setup kibana
+        docker-compose up -d --build logstash logspout elasticsearch metricbeat kibana
         ;;
         *)
         # Default

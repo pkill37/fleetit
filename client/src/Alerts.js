@@ -59,7 +59,7 @@ class Alerts extends React.Component {
                 <h2>Heart Rate Alerts</h2>
                 <ul>
                 {this.state.heart.map((h, index) => (
-                    <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} km/h</li>
+                    <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps</li>
                 ))}
                 </ul>
 

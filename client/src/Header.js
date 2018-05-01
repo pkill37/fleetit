@@ -28,6 +28,12 @@ const Header = () => (
 						<Link to='/history' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>History</Link>
 					</div>
 				</li>
+				<li className='nav-item'>
+                                        <div className="nav-link">
+                                                <i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>directions_bike</i>
+                                                <Link to='/detail/8925' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>Details</Link>
+                                        </div>
+                                </li>
 			</ul>
 		</div>
 	</nav>
