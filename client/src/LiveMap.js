@@ -5,6 +5,13 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-map
 const KAFKA_TOPIC_UPDATES = 'updates'
 const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
 
+const CustomMarker = (props) => (
+  <Marker
+    onClick={(e) => {console.log('hey', e, props.id); window.location.href = '/detail/' + props.id; }}
+    {...props}
+  />
+)
+
 const BikeMap = compose(
     withProps({
         googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
@@ -20,7 +27,7 @@ const BikeMap = compose(
         defaultCenter={{ lat: 42.51126629307819, lng: -73.21476487152603 }}
     >
         {Array.from(props.bikes.values()).map((bike, index) => (
-            <Marker key={index} position={{ lat: bike.lat, lng: bike.lng }} />
+            <CustomMarker id={bike.bike_id} key={index} position={{ lat: bike.lat, lng: bike.lng }} />
         ))}
     </GoogleMap>
 )

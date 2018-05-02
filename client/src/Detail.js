@@ -3,6 +3,10 @@ import {ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Toolt
 
 const API_URL = 'http://localhost:8080/api/v1'
 
+const DetailWrapper = ({ match }) => (
+  <Detail id={match.params.id} />
+);
+
 class Detail extends React.Component {
   state = {
     stats: null,
@@ -10,13 +14,18 @@ class Detail extends React.Component {
   }
 
   async componentDidMount() {
-    let r1 = await fetch(`${API_URL}/bike/8925/stats`)
+    try {
+    let id = this.props.id;
+    let r1 = await fetch(`${API_URL}/bike/${id}/stats`)
     let stats = await r1.json()
     console.log('stats', stats)
-    let r2 = await fetch(`${API_URL}/bike/8925/last/30`)
+    let r2 = await fetch(`${API_URL}/bike/${id}/last/30`)
     let last = await r2.json()
     console.log('last', last)
     this.setState({ stats: stats, last: last })
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -39,56 +48,57 @@ class Detail extends React.Component {
 
       {this.state.last.length !== 0 &&
           <div>
-            <ResponsiveContainer minHeight={300}>
-              <LineChart data={this.state.last}>
-                <XAxis ticks={false} dataKey="timestamp"/>
-                <YAxis/>
-                <Tooltip/>
-                <Legend />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="heartRate" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer minHeight={300}>
-              <LineChart data={this.state.last}>
-                <XAxis ticks={false} dataKey="timestamp"/>
-                <YAxis/>
-                <Tooltip/>
-                <Legend />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="battery" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer minHeight={300}>
-              <LineChart data={this.state.last}>
-                <XAxis ticks={false} dataKey="timestamp"/>
-                <YAxis/>
-                <Tooltip/>
-                <Legend />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="speed" stroke="#ff7f0e" />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer minHeight={300}>
-              <LineChart data={this.state.last}>
-                <XAxis ticks={false} dataKey="timestamp"/>
-                <YAxis/>
-                <Tooltip/>
-                <Legend />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="co2" stroke="#bcbd22" />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer minHeight={300}>
-              <LineChart data={this.state.last}>
-                <XAxis ticks={false} dataKey="timestamp"/>
-                <YAxis/>
-                <Tooltip/>
-                <Legend />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="temp" stroke="#e377c2" />
-              </LineChart>
-            </ResponsiveContainer>
+          <h1>Stats Over Last 30 Days</h1>
+          <ResponsiveContainer minHeight={300}>
+          <LineChart data={this.state.last}>
+          <XAxis tick={false} dataKey="timestamp"/>
+          <YAxis/>
+          <Tooltip/>
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Line type="monotone" dataKey="heartRate" stroke="#8884d8" />
+          </LineChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer minHeight={300}>
+          <LineChart data={this.state.last}>
+          <XAxis tick={false} dataKey="timestamp"/>
+          <YAxis/>
+          <Tooltip/>
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Line type="monotone" dataKey="battery" stroke="#82ca9d" />
+          </LineChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer minHeight={300}>
+          <LineChart data={this.state.last}>
+          <XAxis tick={false} dataKey="timestamp"/>
+          <YAxis/>
+          <Tooltip/>
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Line type="monotone" dataKey="speed" stroke="#ff7f0e" />
+          </LineChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer minHeight={300}>
+          <LineChart data={this.state.last}>
+          <XAxis tick={false} dataKey="timestamp"/>
+          <YAxis/>
+          <Tooltip/>
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Line type="monotone" dataKey="co2" stroke="#bcbd22" />
+          </LineChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer minHeight={300}>
+          <LineChart data={this.state.last}>
+          <XAxis tick={false} dataKey="timestamp"/>
+          <YAxis/>
+          <Tooltip/>
+          <Legend />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Line type="monotone" dataKey="temp" stroke="#e377c2" />
+          </LineChart>
+          </ResponsiveContainer>
           </div>
       }
       </div>
@@ -96,4 +106,4 @@ class Detail extends React.Component {
   }
 }
 
-export default Detail
+export default DetailWrapper
