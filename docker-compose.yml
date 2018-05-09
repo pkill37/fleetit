@@ -4,7 +4,7 @@ services:
   zookeeper-1:
     image: confluentinc/cp-zookeeper:latest
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 1
@@ -17,7 +17,7 @@ services:
   zookeeper-2:
     image: confluentinc/cp-zookeeper:latest
     deploy:
-        restart-policy:
+        restart_policy:
             condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 2
@@ -30,7 +30,7 @@ services:
   zookeeper-3:
     image: confluentinc/cp-zookeeper:latest
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 3
@@ -43,7 +43,7 @@ services:
   kafka-1:
     image: confluentinc/cp-kafka:latest
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     depends_on:
       - zookeeper-1
@@ -57,7 +57,7 @@ services:
   kafka-2:
     image: confluentinc/cp-kafka:latest
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     depends_on:
       - zookeeper-1
@@ -71,7 +71,7 @@ services:
   kafka-3:
     image: confluentinc/cp-kafka:latest
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     depends_on:
       - zookeeper-1
@@ -85,7 +85,7 @@ services:
   sensor:
     image: fleetit-sensor
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
@@ -98,7 +98,7 @@ services:
     image: fleetit-websocket
     deploy:
       replicas: 5
-      restart-policy:
+      restart_policy:
         condition: on-failure
     ports:
       - "9999:9999"
@@ -112,7 +112,7 @@ services:
   client:
     image: fleetit-client
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     ports:
       - "80:80"
@@ -122,7 +122,7 @@ services:
   postgres:
     image: fleetit-postgres
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     ports:
       - "5432:5432"
@@ -134,7 +134,7 @@ services:
   api:
     image: fleetit-api
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     ports:
       - "8080:8080"
@@ -149,7 +149,7 @@ services:
   alerts:
     image: fleetit-alerts
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
@@ -175,7 +175,7 @@ services:
   logspout:
     image: bekt/logspout-logstash
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock
@@ -197,7 +197,7 @@ services:
   metricbeat:
     image: fleetit-metricbeat
     deploy:
-      restart-policy:
+      restart_policy:
         condition: on-failure
     volumes:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
