@@ -3,7 +3,9 @@ version: '3'
 services:
   zookeeper-1:
     image: confluentinc/cp-zookeeper:latest
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 22181
@@ -14,7 +16,9 @@ services:
 
   zookeeper-2:
     image: confluentinc/cp-zookeeper:latest
-    restart: on-failure
+    deploy:
+        restart-policy:
+            condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_CLIENT_PORT: 32181
@@ -25,7 +29,9 @@ services:
 
   zookeeper-3:
     image: confluentinc/cp-zookeeper:latest
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     environment:
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_CLIENT_PORT: 42181
@@ -36,7 +42,9 @@ services:
 
   kafka-1:
     image: confluentinc/cp-kafka:latest
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -48,7 +56,9 @@ services:
 
   kafka-2:
     image: confluentinc/cp-kafka:latest
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -60,7 +70,9 @@ services:
 
   kafka-3:
     image: confluentinc/cp-kafka:latest
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -71,8 +83,10 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:39092
 
   sensor:
-    build: sensor
-    restart: always
+    image: fleetit-sensor
+    deploy:
+      restart-policy:
+        condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
     depends_on:
@@ -81,8 +95,11 @@ services:
       - kafka-3
 
   websocket:
-    build: websocket
-    restart: on-failure
+    image: fleetit-websocket
+    deploy:
+      replicas: 5
+      restart-policy:
+        condition: on-failure
     ports:
       - "9999:9999"
     environment:
@@ -93,16 +110,20 @@ services:
       - kafka-3
 
   client:
-    build: client
-    restart: on-failure
+    image: fleetit-client
+    deploy:
+      restart-policy:
+        condition: on-failure
     ports:
       - "80:80"
     depends_on:
       - websocket
 
   postgres:
-    build: postgres
-    restart: on-failure
+    image: fleetit-postgres
+    deploy:
+      restart-policy:
+        condition: on-failure
     ports:
       - "5432:5432"
     environment:
@@ -111,8 +132,10 @@ services:
       POSTGRES_DB: "fleetit"
 
   api:
-    build: api
-    restart: on-failure
+    image: fleetit-api
+    deploy:
+      restart-policy:
+        condition: on-failure
     ports:
       - "8080:8080"
     environment:
@@ -124,8 +147,10 @@ services:
       - postgres
 
   alerts:
-    build: alerts
-    restart: on-failure
+    image: fleetit-alerts
+    deploy:
+      restart-policy:
+        condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
       POSTGRES_USER: "root"
@@ -138,8 +163,7 @@ services:
       - kafka-3
 
   logstash:
-    build:
-      context: monitoring/logstash/
+    image: fleetit-logstash
     volumes:
       - ./monitoring/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./monitoring/logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -150,7 +174,9 @@ services:
 
   logspout:
     image: bekt/logspout-logstash
-    restart: on-failure
+    deploy:
+      restart-policy:
+        condition: on-failure
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock
     environment:
@@ -159,8 +185,7 @@ services:
       - logstash
 
   elasticsearch:
-    build:
-      context: monitoring/elasticsearch/
+    image: fleetit-elasticsearch
     volumes:
       - ./monitoring/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -170,9 +195,10 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
 
   metricbeat:
-    build:
-      context: monitoring/metricbeat/
-    restart: on-failure
+    image: fleetit-metricbeat
+    deploy:
+      restart-policy:
+        condition: on-failure
     volumes:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
@@ -180,8 +206,7 @@ services:
       - elasticsearch
 
   kibana:
-    build:
-      context: monitoring/kibana/
+    image: fleetit-kibana
     volumes:
       - ./monitoring/kibana/config/:/usr/share/kibana/config:ro
     ports:

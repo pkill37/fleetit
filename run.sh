@@ -1,27 +1,20 @@
 #! /usr/bin/env bash
-set -eu
 
-docker-compose down --volumes --remove-orphans
-docker-compose build zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3 websocket sensor postgres api alerts
-docker-compose up -d zookeeper-1 zookeeper-2 zookeeper-3 kafka-1 kafka-2 kafka-3
+set -euxo pipefail
 
-# Enable monotoring
-if [ $# -ne 0 ]; then
-    case $1 in
-        -m|--monitoring)
-        docker-compose up -d --build logstash logspout elasticsearch metricbeat kibana
-        ;;
-        *)
-        # Default
-        ;;
-    esac
-fi
+#docker build -t fleetit-sensor --no-cache sensor
+#docker build -t fleetit-websocket --no-cache websocket
+#docker build -t fleetit-client --no-cache client
+#docker build -t fleetit-postgres --no-cache postgres
+#docker build -t fleetit-api --no-cache api
+#docker build -t fleetit-alerts --no-cache alerts
+#docker build -t fleetit-logstash --no-cache monitoring/logstash
+#docker build -t fleetit-elasticsearch --no-cache monitoring/elasticsearch
+#docker build -t fleetit-metricbeat --no-cache monitoring/metricbeat
+#docker build -t fleetit-kibana --no-cache monitoring/kibana
 
-echo "Waiting 60 sec for kafka to set up..."
-sleep 60
-docker-compose up -d websocket
-docker-compose up -d --scale sensor=5 sensor
-docker-compose up -d postgres
-docker-compose up -d api
-docker-compose up -d alerts
-#docker-compose up -d client
+docker stack deploy -c docker-compose.yml stackdemo
+docker swarm init
+docker stack rm stackdemo
+docker swarm leave --force
+
