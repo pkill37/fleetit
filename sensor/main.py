@@ -28,7 +28,7 @@ while True:
     for i in range(len(run)):
         #update timestamp
         run[i]["timestamp"] = (dateutil.parser.parse(run[i]["timestamp"]) + timestamp_delta).strftime("%Y-%m-%d %H:%M:%S")
-
+        print(run[i])
         producer.send('updates', run[i])
         time.sleep(sampling_times[i])
 

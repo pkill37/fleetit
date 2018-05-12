@@ -2,30 +2,17 @@
 
 ## Development
 
-Without monitoring
+Start the containers and cluster:
 
 ```
-./run.sh
+docker swarm init --force-new-cluster
+docker stack deploy -c development.yml fleetit
 ```
 
-With monitoring
+Stop the containers and leave the cluster:
 
 ```
-./run.sh -m
+docker stack rm fleetit
+docker swarm leave --force
 ```
 
-Test websocket
-
-```
-wscat --connect "ws://localhost:9999/?topic=updates"
-wscat --connect "ws://localhost:9999/?topic=alerts-speed"
-```
-
-## Deployment
-
-Kubernetes
-
-## TODO
-
-- https://kubernetes.io/docs/getting-started-guides/minikube/
-- run mvn package separetely to cache package dependency downloads
