@@ -3,13 +3,10 @@ import { compose, withProps } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
 const KAFKA_TOPIC_UPDATES = 'updates'
-const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
+const KAFKA_WEBSOCKET_PROXY = 'ws://127.0.0.1:9999'
 
 const CustomMarker = (props) => (
-  <Marker
-    onClick={(e) => {console.log('hey', e, props.id); window.location.href = '/detail/' + props.id; }}
-    {...props}
-  />
+  <Marker onClick={(e) => { props.history.push(`/detail/${props.id}`) }} {...props} />
 )
 
 const BikeMap = compose(
@@ -27,14 +24,17 @@ const BikeMap = compose(
         defaultCenter={{ lat: 42.51126629307819, lng: -73.21476487152603 }}
     >
         {Array.from(props.bikes.values()).map((bike, index) => (
-            <CustomMarker id={bike.bike_id} key={index} position={{ lat: bike.lat, lng: bike.lng }} />
+            <CustomMarker history={props.history} id={bike.bike_id} key={index} position={{ lat: bike.lat, lng: bike.lng }} />
         ))}
     </GoogleMap>
 )
 
 class LiveMap extends React.Component {
-    state = {
-        bikes: new Map()
+    constructor(props) {
+        super(props)
+        this.state = {
+          bikes: new Map()
+        }
     }
 
     componentDidMount() {
@@ -53,7 +53,7 @@ class LiveMap extends React.Component {
 
     render() {
         return (
-            <BikeMap bikes={this.state.bikes} />
+            <BikeMap history={this.props.history} bikes={this.state.bikes} />
         )
     }
 }

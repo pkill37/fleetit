@@ -1,9 +1,9 @@
 import React from 'react';
 import LiveMap from './LiveMap';
 
-const Home = () => (
+const Home = (props) => (
 	<div className='content-wrapper'>
-		<LiveMap/>
+		<LiveMap history={props.history} />
 	</div>
 )
 

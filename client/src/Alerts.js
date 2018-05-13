@@ -3,7 +3,7 @@ import React from 'react';
 const KAFKA_TOPIC_ALERTS_SPEED = 'alerts-speed'
 const KAFKA_TOPIC_ALERTS_HEART = 'alerts-heart-rate'
 const KAFKA_TOPIC_ALERTS_BATTERY = 'alerts-battery'
-const KAFKA_WEBSOCKET_PROXY = 'ws://localhost:9999'
+const KAFKA_WEBSOCKET_PROXY = 'ws://127.0.0.1:9999'
 
 class Alerts extends React.Component {
     state = {
