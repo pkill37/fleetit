@@ -13,35 +13,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
-
-  zookeeper-2:
-    image: confluentinc/cp-zookeeper:latest
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: on-failure
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 32181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
-
-  zookeeper-3:
-    image: confluentinc/cp-zookeeper:latest
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: on-failure
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 42181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
+      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888
 
   kafka-1:
     image: confluentinc/cp-kafka:latest
@@ -51,42 +23,10 @@ services:
         condition: on-failure
     depends_on:
       - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:19092
-
-  kafka-2:
-    image: confluentinc/cp-kafka:latest
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: on-failure
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:29092
-
-  kafka-3:
-    image: confluentinc/cp-kafka:latest
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: on-failure
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:39092
 
   sensor:
     image: fleetit-sensor
@@ -96,11 +36,9 @@ services:
         delay: 5s
         condition: on-failure
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_CLUSTER: "kafka-1:19092"
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
 
   websocket:
     image: fleetit-websocket
@@ -111,11 +49,9 @@ services:
     ports:
       - "9999:9999"
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_CLUSTER: "kafka-1:19092"
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
 
   client:
     image: fleetit-client
@@ -134,6 +70,8 @@ services:
       restart_policy:
         delay: 5s
         condition: on-failure
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
@@ -162,15 +100,13 @@ services:
         delay: 5s
         condition: on-failure
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_CLUSTER: "kafka-1:19092"
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
 
   logstash:
     image: fleetit-logstash
