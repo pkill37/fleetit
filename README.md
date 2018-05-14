@@ -2,6 +2,12 @@
 
 ## Development
 
+Build all images:
+
+```
+./build.sh
+```
+
 Start the cluster and containers and pray that the services converge:
 
 ```
