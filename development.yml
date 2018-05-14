@@ -1,32 +1,27 @@
 version: '3'
 
 services:
-  zookeeper-1:
+  zookeeper:
     image: confluentinc/cp-zookeeper:latest
     deploy:
       restart_policy:
         delay: 5s
         condition: on-failure
     environment:
-      ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 22181
       ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888
 
-  kafka-1:
+  kafka:
     image: confluentinc/cp-kafka:latest
     deploy:
       restart_policy:
         delay: 5s
         condition: on-failure
-    depends_on:
-      - zookeeper-1
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:19092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   sensor:
     image: fleetit-sensor
@@ -36,9 +31,7 @@ services:
         delay: 5s
         condition: on-failure
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092"
-    depends_on:
-      - kafka-1
+      KAFKA_CLUSTER: "kafka:19092"
 
   websocket:
     image: fleetit-websocket
@@ -49,9 +42,7 @@ services:
     ports:
       - "9999:9999"
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092"
-    depends_on:
-      - kafka-1
+      KAFKA_CLUSTER: "kafka:19092"
 
   client:
     image: fleetit-client
@@ -61,8 +52,6 @@ services:
         condition: on-failure
     ports:
       - "80:80"
-    depends_on:
-      - websocket
 
   postgres:
     image: fleetit-postgres
@@ -88,8 +77,6 @@ services:
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
-    depends_on:
-      - postgres
 
   alerts:
     image: fleetit-alerts
@@ -98,13 +85,11 @@ services:
         delay: 5s
         condition: on-failure
     environment:
-      KAFKA_CLUSTER: "kafka-1:19092"
+      KAFKA_CLUSTER: "kafka:19092"
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
-    depends_on:
-      - kafka-1
 
   logstash:
     image: fleetit-logstash
@@ -130,8 +115,6 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock
     environment:
       ROUTE_URIS: logstash://logstash:5000
-    depends_on:
-      - logstash
 
   elasticsearch:
     image: fleetit-elasticsearch
@@ -156,8 +139,6 @@ services:
     volumes:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
-    depends_on:
-      - elasticsearch
 
   kibana:
     image: fleetit-kibana
@@ -169,5 +150,3 @@ services:
       - ./monitoring/kibana/config/:/usr/share/kibana/config:ro
     ports:
       - "5601:5601"
-    depends_on:
-      - elasticsearch
