@@ -6,10 +6,13 @@ const KAFKA_TOPIC_ALERTS_BATTERY = 'alerts-battery'
 const KAFKA_WEBSOCKET_PROXY = 'ws://127.0.0.1:9999'
 
 class Alerts extends React.Component {
-    state = {
+    constructor(props) {
+      super(props)
+      this.state = {
         speed: [],
         heart: [],
         battery: []
+      }
     }
 
     componentDidMount() {

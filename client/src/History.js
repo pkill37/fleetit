@@ -3,9 +3,12 @@ import React from 'react';
 const API_URL = 'http://127.0.0.1:8080/api/v1'
 
 class History extends React.Component {
-	state = {
-      stats: null
-	}
+    constructor(props) {
+      super(props)
+      this.state = {
+        stats: null
+      }
+    }
 
 	async componentDidMount() {
       let response = await fetch(`${API_URL}/stats`)

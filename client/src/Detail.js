@@ -8,9 +8,12 @@ const DetailWrapper = ({ match }) => (
 );
 
 class Detail extends React.Component {
-  state = {
-    stats: null,
-    last: []
+  constructor(props) {
+    super(props)
+    this.state = {
+      stats: null,
+      last: []
+    }
   }
 
   async componentDidMount() {
