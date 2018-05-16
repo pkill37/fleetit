@@ -53,21 +53,21 @@ class Alerts extends React.Component {
                 </div>
 
                 <h2>Speed Alerts</h2>
-                <ul>
+                <ul id="speed">
                 {this.state.speed.map((s, index) => (
                     <li key={index}>Bike #{s.bike_id} is over the speed limit at {s.speed} km/h</li>
                 ))}
                 </ul>
 
                 <h2>Heart Rate Alerts</h2>
-                <ul>
+                <ul id="heart">
                 {this.state.heart.map((h, index) => (
                     <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps</li>
                 ))}
                 </ul>
 
                 <h2>Battery Alerts</h2>
-                <ul>
+                <ul id="battery">
                 {this.state.battery.map((b, index) => (
                     <li key={index}>Bike #{b.bike_id} is on low battery ({b.battery}%)</li>
                 ))}

@@ -4,18 +4,62 @@
   "private": true,
   "dependencies": {
     "material-design-icons": "^3.0.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-google-maps": "^9.4.5",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.1",
-    "recharts": "^1.0.0-beta.10",
-    "recompose": "^0.26.0"
+    "react-scripts": "1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-jest": "^22.4.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^22.4.3",
+    "jest-transform-stub": "^1.0.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-google-maps": "^9.4.5",
+    "react-router-dom": "^4.2.2",
+    "recharts": "^1.0.0-beta.10",
+    "recompose": "^0.26.0",
+    "regenerator-runtime": "^0.11.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ],
+      "react"
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "env",
+            {
+              "modules": "commonjs"
+            }
+          ],
+          "react",
+          "jest"
+        ]
+      }
+    }
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx$": "babel-jest",
+      "^.+\\.js$": "babel-jest",
+      ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
+    },
+    "bail": true,
+    "verbose": true
   }
 }
