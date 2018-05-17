@@ -1,35 +1,50 @@
 node {
-    def app
+    def sensor
+    def websocket
+    def client
+    def postgres
+    def api
+    def alerts
+    def logstash
+    def elastisearch
+    def metricbeat
+    def kibana
 
     stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-
         checkout scm
     }
 
-    stage('Build image') {
-        /* This builds the actual image; synonymous to docker build on the command line */
-
-        api = docker.build("faviouz/fleetit-api", "./api")
+    stage('Build images') {
+        sensor = docker.build("fleetit-sensor", "./sensor")
+        websocket = docker.build("fleetit-websocket", "./websocket")
+        client = docker.build("fleetit-client", "./client")
+        postgres = docker.build("fleetit-postgres", "./postgres")
+        api = docker.build("fleetit-api", "./api")
+        alerts = docker.build("fleetit-alerts", "./alerts")
+        logstash = docker.build("fleetit-logstash", "./logstash")
+        elasticsearch = docker.build("fleetit-elasticsearch", "./elasticsearch")
+        metricbeat = docker.build("fleetit-metricbeat", "./metricbeat")
+        kibana = docker.build("fleetit-kibana", "./kibana")
     }
 
-    stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
-
+    stage('Test images') {
         api.inside {
-            sh 'echo "Tests passed"'
+            sh 'mvn test'
+        }
+
+        client.inside {
+            sh 'npm test'
         }
     }
 
-    stage('Push image') {
-        /* Finally, we'll push the image with two tags:
-         * First, the incremental build number from Jenkins
-         * Second, the 'latest' tag.
-         * Pushing multiple tags is cheap, as all the layers are reused. */
+    stage('Push images') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
             api.push("${env.BUILD_NUMBER}")
             api.push("latest")
         }
+    }
+
+    stage('Deploy') {
+        sh 'docker stack deploy fleetit -c development.yml'
     }
 }
