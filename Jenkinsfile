@@ -15,16 +15,16 @@ node {
     }
 
     stage('Build images') {
-        sensor = docker.build("fleetit-sensor", "./sensor")
-        websocket = docker.build("fleetit-websocket", "./websocket")
-        client = docker.build("fleetit-client", "./client")
-        postgres = docker.build("fleetit-postgres", "./postgres")
-        api = docker.build("fleetit-api", "./api")
-        alerts = docker.build("fleetit-alerts", "./alerts")
-        logstash = docker.build("fleetit-logstash", "./monitoring/logstash")
-        elasticsearch = docker.build("fleetit-elasticsearch", "./monitoring/elasticsearch")
-        metricbeat = docker.build("fleetit-metricbeat", "./monitoring/metricbeat")
-        kibana = docker.build("fleetit-kibana", "./monitoring/kibana")
+        sensor = docker.build("faviouz/fleetit-sensor", "./sensor")
+        websocket = docker.build("faviouz/fleetit-websocket", "./websocket")
+        client = docker.build("faviouz/fleetit-client", "./client")
+        postgres = docker.build("faviouz/fleetit-postgres", "./postgres")
+        api = docker.build("faviouz/fleetit-api", "./api")
+        alerts = docker.build("faviouz/fleetit-alerts", "./alerts")
+        logstash = docker.build("faviouz/fleetit-logstash", "./monitoring/logstash")
+        elasticsearch = docker.build("faviouz/fleetit-elasticsearch", "./monitoring/elasticsearch")
+        metricbeat = docker.build("faviouz/fleetit-metricbeat", "./monitoring/metricbeat")
+        kibana = docker.build("faviouz/fleetit-kibana", "./monitoring/kibana")
     }
 
     stage('Test images') {
