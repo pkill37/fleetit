@@ -21,10 +21,10 @@ node {
         postgres = docker.build("fleetit-postgres", "./postgres")
         api = docker.build("fleetit-api", "./api")
         alerts = docker.build("fleetit-alerts", "./alerts")
-        logstash = docker.build("fleetit-logstash", "./logstash")
-        elasticsearch = docker.build("fleetit-elasticsearch", "./elasticsearch")
-        metricbeat = docker.build("fleetit-metricbeat", "./metricbeat")
-        kibana = docker.build("fleetit-kibana", "./kibana")
+        logstash = docker.build("fleetit-logstash", "./monitoring/logstash")
+        elasticsearch = docker.build("fleetit-elasticsearch", "./monitoring/elasticsearch")
+        metricbeat = docker.build("fleetit-metricbeat", "./monitoring/metricbeat")
+        kibana = docker.build("fleetit-kibana", "./monitoring/kibana")
     }
 
     stage('Test images') {
@@ -39,8 +39,16 @@ node {
 
     stage('Push images') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            api.push("${env.BUILD_NUMBER}")
+            sensor.push("latest")
+            websocket.push("latest")
+            client.push("latest")
+            postgres.push("latest")
             api.push("latest")
+            alerts.push("latest")
+            logstash.push("latest")
+            elasticsearch.push("latest")
+            metricbeat.push("latest")
+            kibana.push("latest")
         }
     }
 

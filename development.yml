@@ -28,7 +28,7 @@ services:
     deploy:
       replicas: 5
       restart_policy:
-        delay: 5s
+        delay: 15s
         condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka:19092"
