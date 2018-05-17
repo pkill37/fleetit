@@ -1,11 +1,11 @@
-import React from 'react';
-import {ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
+import React from 'react'
+import {ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
 
 const API_URL = 'http://127.0.0.1:8080/api/v1'
 
 const DetailWrapper = ({ match }) => (
   <Detail id={match.params.id} />
-);
+)
 
 class Detail extends React.Component {
   constructor(props) {
@@ -18,14 +18,15 @@ class Detail extends React.Component {
 
   async componentDidMount() {
     try {
-    let id = this.props.id;
-    let r1 = await fetch(`${API_URL}/bike/${id}/stats`)
-    let stats = await r1.json()
-    console.log('stats', stats)
-    let r2 = await fetch(`${API_URL}/bike/${id}/last/30`)
-    let last = await r2.json()
-    console.log('last', last)
-    this.setState({ stats: stats, last: last })
+      let id = this.props.id
+
+      let r1 = await fetch(`${API_URL}/bike/${id}/stats`)
+      let stats = await r1.json()
+
+      let r2 = await fetch(`${API_URL}/bike/${id}/last/30`)
+      let last = await r2.json()
+
+      this.setState({ stats: stats, last: last })
     } catch(error) {
       console.log(error)
     }

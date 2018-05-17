@@ -18,7 +18,6 @@ class Alerts extends React.Component {
     componentDidMount() {
         (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_SPEED}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
-            console.log('!!!!!!!!! speed alert', payload)
 
             this.setState(prevState => ({
                 speed: [...prevState.speed, payload]
@@ -27,7 +26,6 @@ class Alerts extends React.Component {
 
         (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_HEART}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
-            console.log('!!!!!!!!! heart alert', payload)
 
             this.setState(prevState => ({
                 heart: [...prevState.heart, payload]
@@ -36,7 +34,6 @@ class Alerts extends React.Component {
 
         (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_BATTERY}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
-            console.log('!!!!!!!!! battery alert', payload)
 
             this.setState(prevState => ({
                 battery: [...prevState.battery, payload]
@@ -47,27 +44,24 @@ class Alerts extends React.Component {
     render() {
         return (
             <div className="content-wrapper">
-                <div style={{backgroundColor: "#fdfefe", height:"50px", marginLeft: "40px"}}>
-                    <i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>report_problem</i>
-                    <h1 style={{display: "inline-block", verticalAlign: "middle", marginLeft: "15px"}}>Alerts</h1>
-                </div>
+                <h1>Alerts</h1>
 
                 <h2>Speed Alerts</h2>
-                <ul id="speed">
+                <ul>
                 {this.state.speed.map((s, index) => (
                     <li key={index}>Bike #{s.bike_id} is over the speed limit at {s.speed} km/h</li>
                 ))}
                 </ul>
 
                 <h2>Heart Rate Alerts</h2>
-                <ul id="heart">
+                <ul>
                 {this.state.heart.map((h, index) => (
                     <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps</li>
                 ))}
                 </ul>
 
                 <h2>Battery Alerts</h2>
-                <ul id="battery">
+                <ul>
                 {this.state.battery.map((b, index) => (
                     <li key={index}>Bike #{b.bike_id} is on low battery ({b.battery}%)</li>
                 ))}

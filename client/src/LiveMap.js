@@ -53,7 +53,9 @@ class LiveMap extends React.Component {
 
     render() {
         return (
-            <BikeMap history={this.props.history} bikes={this.state.bikes} />
+            <div className="content-wrapper">
+              <BikeMap history={this.props.history} bikes={this.state.bikes} />
+            </div>
         )
     }
 }
