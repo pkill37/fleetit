@@ -15,12 +15,6 @@ docker swarm init --force-new-cluster
 docker stack deploy -c development.yml fleetit
 ```
 
-Optionally start a Jenkins agent in all nodes of the cluster:
-
-```
-./jenkins.sh
-```
-
 Stop the containers and leave the cluster:
 
 ```

@@ -28,7 +28,7 @@ services:
     deploy:
       replicas: 5
       restart_policy:
-        delay: 5s
+        delay: 15s
         condition: on-failure
     environment:
       KAFKA_CLUSTER: "kafka:19092"
@@ -140,3 +140,17 @@ services:
       - ./monitoring/kibana/config/:/usr/share/kibana/config:ro
     ports:
       - "5601:5601"
+
+  jenkins:
+    image: fleetit-jenkins
+    user: root
+    deploy:
+      restart_policy:
+        delay: 5s
+        condition: on-failure
+    volumes:
+      - ./jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8082:8080"
+      - "50000:50000"
