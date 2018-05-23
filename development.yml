@@ -6,7 +6,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     environment:
       ZOOKEEPER_CLIENT_PORT: 22181
       ZOOKEEPER_TICK_TIME: 2000
@@ -16,7 +16,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
@@ -29,7 +29,7 @@ services:
       replicas: 5
       restart_policy:
         delay: 15s
-        condition: on-failure
+        condition: any
     environment:
       KAFKA_CLUSTER: "kafka:19092"
 
@@ -38,7 +38,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     ports:
       - "9999:9999"
     environment:
@@ -49,7 +49,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     ports:
       - "80:80"
 
@@ -58,7 +58,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
@@ -69,7 +69,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     ports:
       - "8080:8080"
     environment:
@@ -83,7 +83,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     environment:
       KAFKA_CLUSTER: "kafka:19092"
       POSTGRES_USER: "root"
@@ -96,7 +96,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     volumes:
       - ./monitoring/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./monitoring/logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -105,12 +105,26 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
 
+<<<<<<< HEAD
+=======
+  logspout:
+    image: bekt/logspout-logstash
+    deploy:
+      restart_policy:
+        delay: 5s
+        condition: any
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    environment:
+      ROUTE_URIS: logstash://logstash:5000
+
+>>>>>>> 6b78cbcb0bc94d5f6d12713d75397d337fc7cc89
   elasticsearch:
     image: fleetit-elasticsearch
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     volumes:
       - ./monitoring/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -124,8 +138,8 @@ services:
     user: root
     deploy:
       restart_policy:
-        delay: 20s
-        condition: on-failure
+        delay: 5s
+        condition: any
     volumes:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
@@ -134,8 +148,8 @@ services:
       #    image: fleetit-filebeat
       #    deploy:
       #      restart_policy:
-      #        delay: 20s
-      #        condition: on-failure
+      #        delay: 5s
+      #        condition: any
       #    volumes:
       #       - ./monitoring/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
 
@@ -144,7 +158,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     volumes:
       - ./monitoring/kibana/config/:/usr/share/kibana/config:ro
     ports:
@@ -156,7 +170,7 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        condition: on-failure
+        condition: any
     volumes:
       - ./jenkins-data:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
