@@ -130,6 +130,15 @@ services:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
 
+      #  filebeat:
+      #    image: fleetit-filebeat
+      #    deploy:
+      #      restart_policy:
+      #        delay: 20s
+      #        condition: on-failure
+      #    volumes:
+      #       - ./monitoring/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+
   kibana:
     image: fleetit-kibana
     deploy:
