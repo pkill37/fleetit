@@ -105,20 +105,6 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
 
-<<<<<<< HEAD
-=======
-  logspout:
-    image: bekt/logspout-logstash
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: any
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock
-    environment:
-      ROUTE_URIS: logstash://logstash:5000
-
->>>>>>> 6b78cbcb0bc94d5f6d12713d75397d337fc7cc89
   elasticsearch:
     image: fleetit-elasticsearch
     deploy:
@@ -144,14 +130,15 @@ services:
        - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
 
-      #  filebeat:
-      #    image: fleetit-filebeat
-      #    deploy:
-      #      restart_policy:
-      #        delay: 5s
-      #        condition: any
-      #    volumes:
-      #       - ./monitoring/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  filebeat:
+    image: fleetit-filebeat
+    user: root
+    deploy:
+      restart_policy:
+        delay: 5s
+        condition: any
+    volumes:
+       - ./monitoring/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
 
   kibana:
     image: fleetit-kibana
