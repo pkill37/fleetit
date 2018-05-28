@@ -2,8 +2,7 @@ import React from 'react'
 import { compose, withProps } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
-const KAFKA_TOPIC_UPDATES = 'updates'
-const KAFKA_WEBSOCKET_PROXY = 'ws://127.0.0.1:9999'
+import {KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './constants'
 
 const CustomMarker = (props) => (
   <Marker onClick={(e) => { props.history.push(`/detail/${props.id}`) }} {...props} />
@@ -38,7 +37,7 @@ class LiveMap extends React.Component {
     }
 
     componentDidMount() {
-        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_UPDATES}`)).onmessage = (e) => {
+        (new WebSocket(`${KAFKA_PROXY_URL}/?topic=${KAFKA_TOPIC_UPDATES}`)).onmessage = (e) => {
             // Parse new message
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
 

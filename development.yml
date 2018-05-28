@@ -52,6 +52,8 @@ services:
         condition: any
     ports:
       - "80:80"
+    environment:
+        NODE_ENV: "development"
 
   postgres:
     image: fleetit-postgres
