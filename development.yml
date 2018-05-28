@@ -53,7 +53,7 @@ services:
     ports:
       - "80:80"
     environment:
-        NODE_ENV: "development"
+        REACT_APP_ENV: "development"
 
   postgres:
     image: faviouz/fleetit-postgres:latest
