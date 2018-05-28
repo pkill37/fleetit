@@ -1,13 +1,29 @@
 #! /usr/bin/env bash
 
-docker build -t fleetit-jenkins jenkins
-docker build -t fleetit-sensor sensor
-docker build -t fleetit-websocket websocket
-docker build -t fleetit-client client
-docker build -t fleetit-postgres postgres
-docker build -t fleetit-api api
-docker build -t fleetit-alerts alerts
-docker build -t fleetit-logstash  monitoring/logstash
-docker build -t fleetit-elasticsearch monitoring/elasticsearch
-docker build -t fleetit-metricbeat monitoring/metricbeat
-docker build -t fleetit-kibana monitoring/kibana
+images=(
+    "jenkins"
+    "sensor"
+    "websocket"
+    "client"
+    "postgres"
+    "api"
+    "alerts"
+    "logstash"
+    "elasticsearch"
+    "metricbeat"
+    "kibana"
+)
+
+for image in "${images[@]}"; do
+    docker build -t faviouz/fleetit-$image $image
+    docker push faviouz/fleetit-$image:latest
+done
+
+docker build -t faviouz/fleetit-logstash monitoring/logstash
+docker build -t faviouz/fleetit-elasticsearchmonitoring/elasticsearch
+docker build -t faviouz/fleetit-metricbeat monitoring/metricbeat
+docker build -t faviouz/fleetit-kibana monitoring/kibana
+docker push faviouz/fleetit-logstash:latest
+docker push faviouz/fleetit-elasticsearch:latest
+docker push faviouz/fleetit-metricbeat:latest
+docker push faviouz/fleetit-kibana:latest
