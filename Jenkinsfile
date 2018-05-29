@@ -29,11 +29,11 @@ node {
 
     stage('Test images') {
         api.inside {
-            sh 'echo "Running tests..."'
+            sh 'echo "Running MVN tests..."'
         }
 
-        clientprod.inside {
-            sh 'echo "Running tests..."'
+        clientdev.inside {
+            sh 'echo "Running NPM tests..."'
         }
     }
 
@@ -53,6 +53,14 @@ node {
     }
 
     stage('Deploy') {
-        sh 'docker stack deploy fleetit -c development.yml'
+        sh 'docker service update fleetit_sensor'
+        sh 'docker service update fleetit_websocket'
+        sh 'docker service update fleetit_client'
+        sh 'docker service update fleetit_postgres'
+        sh 'docker service update fleetit_api'
+        sh 'docker service update fleetit_alerts'
+        sh 'docker service update fleetit_elasticsearch'
+        sh 'docker service update fleetit_metricbeat'
+        sh 'docker service update fleetit_kibana'
     }
 }
