@@ -1,7 +1,8 @@
 node {
     def sensor
     def websocket
-    def client
+    def clientdev
+    def clientprod
     def postgres
     def api
     def alerts
@@ -17,7 +18,8 @@ node {
     stage('Build images') {
         sensor = docker.build("faviouz/fleetit-sensor", "./sensor")
         websocket = docker.build("faviouz/fleetit-websocket", "./websocket")
-        client = docker.build("faviouz/fleetit-client", "./client")
+        clientdev = docker.build("faviouz/fleetit-client-development", "-f Dockerfile.development ./client")
+        clientprod = docker.build("faviouz/fleetit-client-production", "-f Dockerfile.production ./client")
         postgres = docker.build("faviouz/fleetit-postgres", "./postgres")
         api = docker.build("faviouz/fleetit-api", "./api")
         alerts = docker.build("faviouz/fleetit-alerts", "./alerts")
@@ -29,12 +31,10 @@ node {
 
     stage('Test images') {
         api.inside {
-            /* sh 'mvn test' */
             sh 'echo "Running tests..."'
         }
 
         client.inside {
-            /* sh 'npm test' */
             sh 'echo "Running tests..."'
         }
     }
@@ -43,7 +43,8 @@ node {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
             sensor.push("latest")
             websocket.push("latest")
-            client.push("latest")
+            clientdev.push("latest")
+            clientprod.push("latest")
             postgres.push("latest")
             api.push("latest")
             alerts.push("latest")
