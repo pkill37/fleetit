@@ -1,9 +1,5 @@
-import React from 'react';
-
-const KAFKA_TOPIC_ALERTS_SPEED = 'alerts-speed'
-const KAFKA_TOPIC_ALERTS_HEART = 'alerts-heart-rate'
-const KAFKA_TOPIC_ALERTS_BATTERY = 'alerts-battery'
-const KAFKA_WEBSOCKET_PROXY = 'ws://127.0.0.1:9999'
+import React from 'react'
+import {KAFKA_PROXY_URL, KAFKA_TOPIC_ALERTS_SPEED, KAFKA_TOPIC_ALERTS_HEART, KAFKA_TOPIC_ALERTS_BATTERY} from './constants'
 
 class Alerts extends React.Component {
     constructor(props) {
@@ -16,7 +12,7 @@ class Alerts extends React.Component {
     }
 
     componentDidMount() {
-        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_SPEED}`)).onmessage = (e) => {
+        (new WebSocket(`${KAFKA_PROXY_URL}/?topic=${KAFKA_TOPIC_ALERTS_SPEED}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
 
             this.setState(prevState => ({
@@ -24,7 +20,7 @@ class Alerts extends React.Component {
             }))
         }
 
-        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_HEART}`)).onmessage = (e) => {
+        (new WebSocket(`${KAFKA_PROXY_URL}/?topic=${KAFKA_TOPIC_ALERTS_HEART}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
 
             this.setState(prevState => ({
@@ -32,7 +28,7 @@ class Alerts extends React.Component {
             }))
         }
 
-        (new WebSocket(`${KAFKA_WEBSOCKET_PROXY}/?topic=${KAFKA_TOPIC_ALERTS_BATTERY}`)).onmessage = (e) => {
+        (new WebSocket(`${KAFKA_PROXY_URL}/?topic=${KAFKA_TOPIC_ALERTS_BATTERY}`)).onmessage = (e) => {
             var payload = JSON.parse(JSON.parse(e.data)[0].message)
 
             this.setState(prevState => ({
