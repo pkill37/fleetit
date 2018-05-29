@@ -45,15 +45,15 @@ services:
       KAFKA_CLUSTER: "kafka:19092"
 
   client:
-    image: faviouz/fleetit-client:latest
+    image: faviouz/fleetit-client-development:latest
     deploy:
       restart_policy:
         delay: 5s
         condition: any
     ports:
-      - "80:80"
-    environment:
-        REACT_APP_ENV: "development"
+      - "80:3000"
+    volumes:
+      - ./client:/app
 
   postgres:
     image: faviouz/fleetit-postgres:latest
