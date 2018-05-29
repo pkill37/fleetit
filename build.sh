@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -euo pipefail
+
 docker build -t faviouz/fleetit-jenkins jenkins
 docker push faviouz/fleetit-jenkins:latest
 
