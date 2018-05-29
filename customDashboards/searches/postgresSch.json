@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "079363f0-6355-11e8-9c42-7b9bbbce7ccf",
+    "_type": "search",
+    "_source": {
+      "version": 1,
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "columns": [
+        "postgresql.activity.user.name",
+        "postgresql.activity.database.name",
+        "postgresql.activity.query"
+      ],
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"metricbeat-*\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"_exists_:postgresql.activity.query AND !(postgresql.activity.query:\\\"\\\")\"},\"filter\":[]}"
+      },
+      "description": "",
+      "title": "Postgres Queries",
+      "hits": 0
+    }
+  }
+]

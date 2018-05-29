@@ -2,6 +2,70 @@ metricbeat.config.modules:
   path: ${path.config}/modules.d/*.yml
   reload.enabled: false
 
+metricbeat.modules:
+- module: system
+  period: 10s
+  metricsets:
+    - cpu
+    - load
+    - memory
+    - network
+    - process
+    - process_summary
+    #- core
+    #- diskio
+    #- socket
+  processes: ['.*']
+  process.include_top_n:
+    by_cpu: 5      # include top 5 processes by CPU
+    by_memory: 5   # include top 5 processes by memory
+
+- module: system
+  period: 1m
+  metricsets:
+    - filesystem
+    - fsstat
+  processors:
+  - drop_event.when.regexp:
+      system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+
+- module: system
+  period: 15m
+  metricsets:
+    - uptime
+
+- module: docker
+  enabled: true
+  metricsets: ["container", "cpu", "diskio", "healthcheck", "info", "memory", "network"]
+  hosts: ["unix:///tmp/docker.sock"]
+  period: 10s
+
+- module: postgresql
+  enabled: true
+  metricsets: ["database", "bgwriter", "activity"]
+  period: 10s
+  hosts: ['postgres://postgres:5432?sslmode=disable&dbname=fleetit']
+  username: root
+  password: demo1234
+
+- module: nginx
+  enabled: true
+  metricsets: ["stubstatus"]
+  period: 10s
+  hosts: ["http://client"]
+  server_status_path: "nginx_status"
+
+- module: zookeeper
+  enabled: true
+  metricsets: ["mntr"]
+  period: 10s
+  hosts: ["zookeeper:22181"]
+
+- module: kafka
+  metricsets: ["consumergroup", "partition"]
+  period: 10s
+  hosts: ["kafka:9092"]
+
 processors:
 - add_cloud_metadata:
 
