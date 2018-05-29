@@ -93,20 +93,6 @@ services:
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
 
-  logstash:
-    image: faviouz/fleetit-logstash:latest
-    deploy:
-      restart_policy:
-        delay: 5s
-        condition: any
-    volumes:
-      - ./monitoring/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./monitoring/logstash/pipeline:/usr/share/logstash/pipeline:ro
-    ports:
-      - "5000:5000"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-
   elasticsearch:
     image: faviouz/fleetit-elasticsearch:latest
     deploy:
