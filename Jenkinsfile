@@ -32,7 +32,7 @@ node {
             sh 'echo "Running tests..."'
         }
 
-        client.inside {
+        clientprod.inside {
             sh 'echo "Running tests..."'
         }
     }
