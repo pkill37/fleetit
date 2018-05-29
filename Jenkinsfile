@@ -17,8 +17,8 @@ node {
     stage('Build images') {
         sensor = docker.build("faviouz/fleetit-sensor", "./sensor")
         websocket = docker.build("faviouz/fleetit-websocket", "./websocket")
-        clientdev = docker.build("faviouz/fleetit-client-development", "-f Dockerfile.development ./client")
-        clientprod = docker.build("faviouz/fleetit-client-production", "-f Dockerfile.production ./client")
+        clientdev = docker.build("faviouz/fleetit-client-development", "-f client/Dockerfile.development ./client")
+        clientprod = docker.build("faviouz/fleetit-client-production", "-f client/Dockerfile.production ./client")
         postgres = docker.build("faviouz/fleetit-postgres", "./postgres")
         api = docker.build("faviouz/fleetit-api", "./api")
         alerts = docker.build("faviouz/fleetit-alerts", "./alerts")
