@@ -6,7 +6,6 @@ node {
     def postgres
     def api
     def alerts
-    def logstash
     def elastisearch
     def metricbeat
     def kibana
@@ -23,7 +22,6 @@ node {
         postgres = docker.build("faviouz/fleetit-postgres", "./postgres")
         api = docker.build("faviouz/fleetit-api", "./api")
         alerts = docker.build("faviouz/fleetit-alerts", "./alerts")
-        logstash = docker.build("faviouz/fleetit-logstash", "./monitoring/logstash")
         elasticsearch = docker.build("faviouz/fleetit-elasticsearch", "./monitoring/elasticsearch")
         metricbeat = docker.build("faviouz/fleetit-metricbeat", "./monitoring/metricbeat")
         kibana = docker.build("faviouz/fleetit-kibana", "./monitoring/kibana")
@@ -48,7 +46,6 @@ node {
             postgres.push("latest")
             api.push("latest")
             alerts.push("latest")
-            logstash.push("latest")
             elasticsearch.push("latest")
             metricbeat.push("latest")
             kibana.push("latest")

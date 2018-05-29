@@ -26,9 +26,6 @@ docker push faviouz/fleetit-api:latest
 docker build -t faviouz/fleetit-alerts alerts
 docker push faviouz/fleetit-alerts:latest
 
-docker build -t faviouz/fleetit-logstash monitoring/logstash
-docker push faviouz/fleetit-logstash:latest
-
 docker build -t faviouz/fleetit-elasticsearch monitoring/elasticsearch
 docker push faviouz/fleetit-elasticsearch:latest
 
