@@ -24,7 +24,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   sensor:
-    image: faviouz/fleetit-sensor:latest
+    image: fleetit-sensor:latest
     deploy:
       replicas: 5
       restart_policy:
@@ -34,7 +34,7 @@ services:
       KAFKA_CLUSTER: "kafka:19092"
 
   websocket:
-    image: faviouz/fleetit-websocket:latest
+    image: fleetit-websocket:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -45,7 +45,7 @@ services:
       KAFKA_CLUSTER: "kafka:19092"
 
   client:
-    image: faviouz/fleetit-client-development:latest
+    image: fleetit-client-development:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -56,7 +56,7 @@ services:
       - ./client:/app
 
   postgres:
-    image: faviouz/fleetit-postgres:latest
+    image: fleetit-postgres:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -67,7 +67,7 @@ services:
       POSTGRES_DB: "fleetit"
 
   api:
-    image: faviouz/fleetit-api:latest
+    image: fleetit-api:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -81,7 +81,7 @@ services:
       POSTGRES_HOST: "postgres"
 
   alerts:
-    image: faviouz/fleetit-alerts:latest
+    image: fleetit-alerts:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -94,7 +94,7 @@ services:
       POSTGRES_HOST: "postgres"
 
   elasticsearch:
-    image: faviouz/fleetit-elasticsearch:latest
+    image: fleetit-elasticsearch:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -108,7 +108,7 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
 
   metricbeat:
-    image: faviouz/fleetit-metricbeat:latest
+    image: fleetit-metricbeat:latest
     user: root
     deploy:
       restart_policy:
@@ -119,7 +119,7 @@ services:
        - /var/run/docker.sock:/tmp/docker.sock
 
   kibana:
-    image: faviouz/fleetit-kibana:latest
+    image: fleetit-kibana:latest
     deploy:
       restart_policy:
         delay: 5s
@@ -130,7 +130,7 @@ services:
       - "5601:5601"
 
   jenkins:
-    image: faviouz/fleetit-jenkins:latest
+    image: fleetit-jenkins:latest
     user: root
     deploy:
       restart_policy:
