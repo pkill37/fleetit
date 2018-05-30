@@ -115,7 +115,6 @@ services:
         delay: 5s
         condition: any
     volumes:
-       - ./monitoring/metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
        - /var/run/docker.sock:/tmp/docker.sock
 
   kibana:
