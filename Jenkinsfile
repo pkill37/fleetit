@@ -15,16 +15,16 @@ node {
     }
 
     stage('Build images') {
-        sensor = docker.build("faviouz/fleetit-sensor", "./sensor")
-        websocket = docker.build("faviouz/fleetit-websocket", "./websocket")
-        clientdev = docker.build("faviouz/fleetit-client-development", "-f client/Dockerfile.development ./client")
-        clientprod = docker.build("faviouz/fleetit-client-production", "-f client/Dockerfile.production ./client")
-        postgres = docker.build("faviouz/fleetit-postgres", "./postgres")
-        api = docker.build("faviouz/fleetit-api", "./api")
-        alerts = docker.build("faviouz/fleetit-alerts", "./alerts")
-        elasticsearch = docker.build("faviouz/fleetit-elasticsearch", "./monitoring/elasticsearch")
-        metricbeat = docker.build("faviouz/fleetit-metricbeat", "./monitoring/metricbeat")
-        kibana = docker.build("faviouz/fleetit-kibana", "./monitoring/kibana")
+        sensor = docker.build("fleetit-sensor", "./sensor")
+        websocket = docker.build("fleetit-websocket", "./websocket")
+        clientdev = docker.build("fleetit-client-development", "-f client/Dockerfile.development ./client")
+        clientprod = docker.build("fleetit-client-production", "-f client/Dockerfile.production ./client")
+        postgres = docker.build("fleetit-postgres", "./postgres")
+        api = docker.build("fleetit-api", "./api")
+        alerts = docker.build("fleetit-alerts", "./alerts")
+        elasticsearch = docker.build("fleetit-elasticsearch", "./monitoring/elasticsearch")
+        metricbeat = docker.build("fleetit-metricbeat", "./monitoring/metricbeat")
+        kibana = docker.build("fleetit-kibana", "./monitoring/kibana")
     }
 
     stage('Test images') {
@@ -34,21 +34,6 @@ node {
 
         clientdev.inside {
             sh 'echo "Running NPM tests..."'
-        }
-    }
-
-    stage('Push images') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            sensor.push("latest")
-            websocket.push("latest")
-            clientdev.push("latest")
-            clientprod.push("latest")
-            postgres.push("latest")
-            api.push("latest")
-            alerts.push("latest")
-            elasticsearch.push("latest")
-            metricbeat.push("latest")
-            kibana.push("latest")
         }
     }
 
