@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   zookeeper:
@@ -27,6 +27,10 @@ services:
     image: fleetit-sensor:latest
     deploy:
       replicas: 5
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 15s
         condition: any
@@ -36,6 +40,11 @@ services:
   websocket:
     image: fleetit-websocket:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -47,6 +56,11 @@ services:
   client:
     image: fleetit-client-development:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -58,6 +72,11 @@ services:
   postgres:
     image: fleetit-postgres:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -69,6 +88,11 @@ services:
   api:
     image: fleetit-api:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -83,6 +107,11 @@ services:
   alerts:
     image: fleetit-alerts:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -96,6 +125,11 @@ services:
   elasticsearch:
     image: fleetit-elasticsearch:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -111,6 +145,11 @@ services:
     image: fleetit-metricbeat:latest
     user: root
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
@@ -120,6 +159,11 @@ services:
   kibana:
     image: fleetit-kibana:latest
     deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       restart_policy:
         delay: 5s
         condition: any
