@@ -8,9 +8,7 @@
     "react-google-maps": "^9.4.5",
     "react-router-dom": "^4.2.2",
     "recharts": "^1.0.0-beta.10",
-    "recompose": "^0.26.0"
-  },
-  "devDependencies": {
+    "recompose": "^0.26.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-to-json": "^3.3.3",
