@@ -41,4 +41,4 @@ ufw allow 9200/tcp
 
 # Reload
 ufw reload
-ufw enable
+ufw --force enable
