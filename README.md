@@ -5,7 +5,7 @@
 Build all images:
 
 ```
-./build.sh
+./build_development.sh
 ```
 
 Start the cluster and containers and pray that the services converge:

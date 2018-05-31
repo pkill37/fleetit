@@ -24,7 +24,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   sensor:
-    image: fleetit-sensor:latest
+    image: faviouz/fleetit-sensor:latest
     deploy:
       replicas: 5
       update_config:
@@ -38,7 +38,7 @@ services:
       KAFKA_CLUSTER: "kafka:19092"
 
   websocket:
-    image: fleetit-websocket:latest
+    image: faviouz/fleetit-websocket:latest
     deploy:
       replicas: 1
       update_config:
@@ -54,7 +54,7 @@ services:
       KAFKA_CLUSTER: "kafka:19092"
 
   client:
-    image: fleetit-client-production:latest
+    image: faviouz/fleetit-client-production:latest
     deploy:
       replicas: 1
       update_config:
@@ -68,7 +68,7 @@ services:
       - "80:3000"
 
   postgres:
-    image: fleetit-postgres:latest
+    image: faviouz/fleetit-postgres:latest
     deploy:
       replicas: 1
       update_config:
@@ -84,7 +84,7 @@ services:
       POSTGRES_DB: "fleetit"
 
   api:
-    image: fleetit-api:latest
+    image: faviouz/fleetit-api:latest
     deploy:
       replicas: 1
       update_config:
@@ -103,7 +103,7 @@ services:
       POSTGRES_HOST: "postgres"
 
   alerts:
-    image: fleetit-alerts:latest
+    image: faviouz/fleetit-alerts:latest
     deploy:
       replicas: 1
       update_config:
@@ -121,7 +121,7 @@ services:
       POSTGRES_HOST: "postgres"
 
   elasticsearch:
-    image: fleetit-elasticsearch:latest
+    image: faviouz/fleetit-elasticsearch:latest
     deploy:
       replicas: 1
       update_config:
@@ -140,7 +140,7 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
 
   metricbeat:
-    image: fleetit-metricbeat:latest
+    image: faviouz/fleetit-metricbeat:latest
     user: root
     deploy:
       replicas: 1
@@ -155,7 +155,7 @@ services:
        - /var/run/docker.sock:/tmp/docker.sock
 
   kibana:
-    image: fleetit-kibana:latest
+    image: faviouz/fleetit-kibana:latest
     deploy:
       replicas: 1
       update_config:
@@ -171,7 +171,7 @@ services:
       - "5601:5601"
 
   jenkins:
-    image: fleetit-jenkins:latest
+    image: faviouz/fleetit-jenkins:latest
     user: root
     deploy:
       restart_policy:
