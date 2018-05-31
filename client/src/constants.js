@@ -1,3 +1,4 @@
+export const GMAPS_KEY = process.env.REACT_APP_GMAPS_KEY
 export const API_URL = `http://${process.env.REACT_APP_API_URL}`
 export const KAFKA_PROXY_URL = `ws://${process.env.REACT_APP_KAFKA_PROXY_URL}`
 export const KAFKA_TOPIC_UPDATES = process.env.REACT_APP_KAFKA_TOPIC_UPDATES

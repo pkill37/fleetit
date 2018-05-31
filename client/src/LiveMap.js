@@ -2,7 +2,7 @@ import React from 'react'
 import { compose, withProps } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
-import {KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './constants'
+import {GMAPS_KEY, KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './constants'
 
 const CustomMarker = (props) => (
   <Marker onClick={(e) => { props.history.push(`/detail/${props.id}`) }} {...props} />
@@ -10,7 +10,7 @@ const CustomMarker = (props) => (
 
 const BikeMap = compose(
     withProps({
-        googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
+        googleMapURL: `https://maps.googleapis.com/maps/api/js?${GMAPS_KEY}v=3.exp&libraries=geometry,drawing,places`,
         loadingElement: <div style={{ height: `100%` }} />,
         containerElement: <div style={{ height: `100vh` }} />,
         mapElement: <div style={{ height: `100%` }} />,
