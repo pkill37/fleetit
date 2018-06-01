@@ -10,6 +10,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 22181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -22,6 +24,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - network
 
   sensor:
     image: fleetit-sensor:latest
@@ -36,6 +40,8 @@ services:
         condition: any
     environment:
       KAFKA_CLUSTER: "kafka:19092"
+    networks:
+      - network
 
   websocket:
     image: fleetit-websocket:latest
@@ -52,6 +58,8 @@ services:
       - "9999:9999"
     environment:
       KAFKA_CLUSTER: "kafka:19092"
+    networks:
+      - network
 
   client:
     image: fleetit-client-development:latest
@@ -68,6 +76,8 @@ services:
       - "80:3000"
     volumes:
       - ./client:/app
+    networks:
+      - network
 
   postgres:
     image: fleetit-postgres:latest
@@ -84,6 +94,8 @@ services:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
+    networks:
+      - network
 
   api:
     image: fleetit-api:latest
@@ -103,6 +115,8 @@ services:
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
+    networks:
+      - network
 
   alerts:
     image: fleetit-alerts:latest
@@ -121,6 +135,8 @@ services:
       POSTGRES_PASSWORD: "demo1234"
       POSTGRES_DB: "fleetit"
       POSTGRES_HOST: "postgres"
+    networks:
+      - network
 
   elasticsearch:
     image: fleetit-elasticsearch:latest
@@ -140,6 +156,8 @@ services:
       - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - network
 
   metricbeat:
     image: fleetit-metricbeat:latest
@@ -155,6 +173,8 @@ services:
         condition: any
     volumes:
        - /var/run/docker.sock:/tmp/docker.sock
+    networks:
+      - network
 
   kibana:
     image: fleetit-kibana:latest
@@ -171,6 +191,8 @@ services:
       - ./monitoring/kibana/config/:/usr/share/kibana/config:ro
     ports:
       - "5601:5601"
+    networks:
+      - network
 
   jenkins:
     image: fleetit-jenkins:latest
@@ -187,3 +209,10 @@ services:
     ports:
       - "8082:8080"
       - "50000:50000"
+    networks:
+      - network
+
+networks:
+  network:
+    driver: overlay
+    attachable: true
