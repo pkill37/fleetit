@@ -33,7 +33,12 @@ node {
         }
 
         clientdev.inside {
-            sh 'npm test'
+            sh """
+                ls
+                ls /
+                cd client
+                npm test
+            """
         }
     }
 
