@@ -33,19 +33,42 @@ class Detail extends React.Component {
 
   render() {
     return (
-      <div className="content-wrapper">
+      <div className="content-wrapper" style={{ padding: '2rem' }}>
       {this.state.stats !== null &&
         <div>
         <h1>Bike #{this.state.stats.bikeId} Most Recent Details</h1>
-        <ul>
-        <li>Speed: {this.state.stats.speed} km/h</li>
-        <li>CO2: {this.state.stats.co2}</li>
-        <li>Heart Rate: {this.state.stats.heartRate}</li>
-        <li>Temperature: {this.state.stats.temp}</li>
-        <li>Battery: {this.state.stats.battery}</li>
-        <li>Latitude: {this.state.stats.lat}</li>
-        <li>Longitude: {this.state.stats.lng}</li>
-        </ul>
+        <div className="card-deck">
+            <div className="card text-white bg-danger mb-3" style={{maxWidth: '18rem'}}>
+                <div className="card-header">Heart Rate</div>
+                <div className="card-body">
+                    <h1 className="card-title text-center">{this.state.stats.heartRate.toFixed(2)} bps</h1>
+                </div>
+            </div>
+            <div className="card text-white bg-warning mb-3" style={{maxWidth: '18rem'}}>
+                <div className="card-header">Battery</div>
+                <div className="card-body">
+                    <h1 className="card-title text-center">{this.state.stats.battery.toFixed(2)}%</h1>
+                </div>
+            </div>
+            <div className="card text-white bg-success mb-3" style={{maxWidth: '18rem'}}>
+                <div className="card-header">Speed</div>
+                <div className="card-body">
+                    <h1 className="card-title text-center">{this.state.stats.speed.toFixed(2)} km/h</h1>
+                </div>
+            </div>
+            <div className="card text-white bg-primary mb-3" style={{maxWidth: '18rem'}}>
+                <div className="card-header">Temperature</div>
+                <div className="card-body">
+                    <h1 className="card-title text-center">{this.state.stats.temp.toFixed(2)} ºC</h1>
+                </div>
+            </div>
+            <div className="card text-white bg-dark mb-3" style={{maxWidth: '18rem'}}>
+                <div className="card-header">CO2</div>
+                <div className="card-body">
+                    <h1 className="card-title text-center">{this.state.stats.co2.toFixed(2)} ppm</h1>
+                </div>
+            </div>
+        </div>
         </div>
       }
 

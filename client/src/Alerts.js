@@ -40,7 +40,7 @@ class Alerts extends React.Component {
 
     render() {
         return (
-            <div className="content-wrapper">
+            <div className="content-wrapper" style={{ padding: '2rem' }}>
                 <h1>Alerts</h1>
 
                 {this.state.speed.map((s, index) => (

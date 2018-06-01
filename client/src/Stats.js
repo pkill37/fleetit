@@ -17,8 +17,8 @@ class Stats extends React.Component {
 
     render() {
         return (
-            <div className='content-wrapper'>
-            <h1>Stats</h1>
+            <div className="content-wrapper" style={{ padding: '2rem' }}>
+            <h1>Global Average Stats</h1>
             {this.state.stats != null && (
                 <div className="card-deck">
                     <div className="card text-white bg-danger mb-3" style={{maxWidth: '18rem'}}>
