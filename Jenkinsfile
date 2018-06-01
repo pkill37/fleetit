@@ -33,12 +33,7 @@ node {
         }
 
         clientdev.inside {
-            sh """
-                ls
-                cd client
-                npm install
-                npm test
-            """
+            sh './wait-for websocket:9999 -- ./wait-for api:8080 -- npm install && npm test'
         }
     }
 
