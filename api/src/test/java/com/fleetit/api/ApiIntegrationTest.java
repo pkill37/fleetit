@@ -42,6 +42,6 @@ public class ApiIntegrationTest {
 	}
 
 	private String createURLWithPort(String uri) {
-		return "http://127.0.0.1:8080" + uri;
+		return "http://api:8080" + uri;
 	}
 }
