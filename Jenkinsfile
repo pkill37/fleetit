@@ -33,7 +33,7 @@ node {
         }
 
         clientdev.inside {
-            sh 'echo "Running NPM tests..."'
+            sh 'npm test'
         }
     }
 
