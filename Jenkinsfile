@@ -29,8 +29,8 @@ node {
 
     stage('Test images') {
         sh './wait-for websocket:9999 -- ./wait-for api:8080 -- echo "Services are up! Starting tests..."'
-        sh 'docker run --network fleetit_network -w /app -v $PWD/client:/app node:alpine npm install && npm test'
-        sh 'docker run --network fleetit_network -w /app -v $PWD/api:/app maven:3.5-jdk-9-slim mvn test'
+        sh 'docker run --network fleetit_network -w /app -v $PWD/client:/app node:alpine sh -c "npm install && npm test"'
+        sh 'docker run --network fleetit_network -w /app -v $PWD/api:/app maven:3.5-jdk-9-slim sh -c "mvn test"'
     }
 
     stage('Deploy') {
