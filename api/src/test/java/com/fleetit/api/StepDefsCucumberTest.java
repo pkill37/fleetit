@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 public class StepDefsCucumberTest extends SpringCucumberTest{
 	@When("^the client calls /api/v1/stats$")
 	public void the_client_issues_GET_to_stats() throws Throwable{
-	    executeGet("http://127.0.0.1:8080/api/v1/stats");
+	    executeGet("http://api:8080/api/v1/stats");
 	}
 
 	@Then("^the client receives status code at stats of (\\d+)$")
@@ -27,7 +27,7 @@ public class StepDefsCucumberTest extends SpringCucumberTest{
 
 	@When("^the client calls /api/v1/bike/(\\d+)/stats$")
 	public void the_client_issues_GET_to_bike_stats(int id) throws Throwable{
-	    executeGet("http://127.0.0.1:8080/api/v1/bike/"+id+"/stats");
+	    executeGet("http://api:8080/api/v1/bike/"+id+"/stats");
 	}
 
     @Then("^the client receives status code at stats of bike of (\\d+)$")
@@ -43,7 +43,7 @@ public class StepDefsCucumberTest extends SpringCucumberTest{
 
 	@When("^the client calls /api/v1/bike/(\\d+)/last/(\\d+)$")
 	public void the_client_issues_GET_to_last_days_of_bike(int id, int days) throws Throwable{
-	    executeGet("http://127.0.0.1:8080/api/v1/bike/"+id+"/last/"+days);
+	    executeGet("http://api:8080/api/v1/bike/"+id+"/last/"+days);
 	}
 
     @Then("^the client receives status code at last days of bike of (\\d+)$")
