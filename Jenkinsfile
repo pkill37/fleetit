@@ -31,7 +31,7 @@ node {
         sh './wait-for websocket:9999 -- ./wait-for api:8080 -- echo "Services are up! Starting tests..."'
 
         api.inside {
-            sh 'echo "Running MVN tests..."'
+            sh 'cd api && docker service create  --name fleetit-mvntest --network fleetit_default -w="/app" -u root --mount "type=bind,source=$PWD,target=/app" maven:3.5-jdk-9-slim mvn test || true'
         }
 
         clientdev.inside {
