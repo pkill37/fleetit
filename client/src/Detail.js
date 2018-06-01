@@ -1,6 +1,6 @@
 import React from 'react'
 import {ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
-import {API_URL} from './constants'
+import {API_URL} from './Constants'
 
 const DetailWrapper = ({ match }) => (
   <Detail id={match.params.id} />

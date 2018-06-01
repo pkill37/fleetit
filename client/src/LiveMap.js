@@ -2,7 +2,7 @@ import React from 'react'
 import { compose, withProps } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
-import {GMAPS_KEY, KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './constants'
+import {GMAPS_KEY, KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './Constants'
 
 const CustomMarker = (props) => (
   <Marker onClick={(e) => { props.history.push(`/detail/${props.id}`) }} {...props} />
