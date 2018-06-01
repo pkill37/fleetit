@@ -34,7 +34,7 @@ docker swarm leave
 
 ## Production
 
-Configure the DigitalOcean firewall on all nodes of the cluster:
+Configure the DigitalOcean firewall on all nodes of the cluster to allow Docker Swarm traffic:
 
 ```
 ./digitalocean_firewall.sh -m
