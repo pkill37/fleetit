@@ -45,19 +45,19 @@ class Alerts extends React.Component {
 
                 {this.state.speed.map((s, index) => (
                     <div key={index} className="alert alert-info" role="alert">
-                    <Link to={`/bike/${s.bike_id}`}>Bike #{s.bike_id}</Link> is over the speed limit at {s.speed} km/h
+                    Bike <Link to={`/bike/${s.bike_id}`}>#{s.bike_id}</Link> is over the speed limit at {s.speed.toFixed(2)} km/h
                     </div>
                 ))}
 
                 {this.state.heart.map((h, index) => (
                     <div key={index} className="alert alert-danger" role="alert">
-                    <Link to={`/bike/${h.bike_id}`}>Bike #{h.bike_id}</Link> exceeds the heart rate at {h.heart_rate} bps
+                    Bike <Link to={`/bike/${h.bike_id}`}>#{h.bike_id}</Link> exceeds the heart rate at {h.heart_rate.toFixed(2)} bps
                     </div>
                 ))}
 
                 {this.state.battery.map((b, index) => (
                     <div key={index} className="alert alert-warning" role="alert">
-                    <Link to={`/bike/${b.bike_id}`}>Bike #{b.bike_id}</Link> is low on battery at {b.battery}%
+                    Bike <Link to={`/bike/${b.bike_id}`}>#{b.bike_id}</Link> is low on battery at {b.battery.toFixed(2)}%
                     </div>
                 ))}
             </div>
