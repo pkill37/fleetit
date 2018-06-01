@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import {KAFKA_PROXY_URL, KAFKA_TOPIC_ALERTS_SPEED, KAFKA_TOPIC_ALERTS_HEART, KAFKA_TOPIC_ALERTS_BATTERY} from './Constants'
 
 class Alerts extends React.Component {
@@ -44,19 +45,19 @@ class Alerts extends React.Component {
 
                 {this.state.speed.map((s, index) => (
                     <div key={index} className="alert alert-info" role="alert">
-                    Bike #{s.bike_id} is over the speed limit at {s.speed} km/h
+                    <Link to={`/bike/${s.bike_id}`}>Bike #{s.bike_id}</Link> is over the speed limit at {s.speed} km/h
                     </div>
                 ))}
 
                 {this.state.heart.map((h, index) => (
                     <div key={index} className="alert alert-danger" role="alert">
-                    Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps
+                    <Link to={`/bike/${h.bike_id}`}>Bike #{h.bike_id}</Link> exceeds the heart rate at {h.heart_rate} bps
                     </div>
                 ))}
 
                 {this.state.battery.map((b, index) => (
                     <div key={index} className="alert alert-warning" role="alert">
-                    Bike #{b.bike_id} is low on battery at {b.battery}%
+                    <Link to={`/bike/${b.bike_id}`}>Bike #{b.bike_id}</Link> is low on battery at {b.battery}%
                     </div>
                 ))}
             </div>

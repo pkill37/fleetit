@@ -1,7 +1,7 @@
 import React from 'react';
 import {API_URL} from './Constants'
 
-class History extends React.Component {
+class Stats extends React.Component {
     constructor(props) {
       super(props)
       this.state = {
@@ -33,4 +33,4 @@ class History extends React.Component {
 	}
 }
 
-export default History;
+export default Stats;

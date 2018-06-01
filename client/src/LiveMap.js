@@ -5,7 +5,7 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-map
 import {GMAPS_KEY, KAFKA_PROXY_URL, KAFKA_TOPIC_UPDATES} from './Constants'
 
 const CustomMarker = (props) => (
-  <Marker onClick={(e) => { props.history.push(`/detail/${props.id}`) }} {...props} />
+  <Marker onClick={(e) => { props.history.push(`/bike/${props.id}`) }} {...props} />
 )
 
 const BikeMap = compose(
