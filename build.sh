@@ -13,3 +13,4 @@ docker build -t fleetit-alerts alerts
 docker build -t fleetit-elasticsearch monitoring/elasticsearch
 docker build -t fleetit-metricbeat monitoring/metricbeat
 docker build -t fleetit-kibana monitoring/kibana
+docker build -t fleetit-import_dashboards monitoring/customDashboards

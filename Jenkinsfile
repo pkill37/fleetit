@@ -28,18 +28,11 @@ node {
     }
 
     stage('Test images') {
-        api.inside {
-            sh 'echo "Running MVN tests..."'
-        }
+        sh './wait-for websocket:9999 -- ./wait-for api:8080 -- echo "Services are up! Starting tests..."'
 
-        clientdev.inside {
-            sh """
-                ls
-                cd client
-                npm install
-                npm test
-            """
-        }
+        sh 'docker run --network fleetit_network -w /app -v $PWD/api:/app maven:3.5-jdk-9-slim cd api && ls && mvn test'
+
+        sh 'docker run --network fleetit_network -w /app -v $PWD/client:/app node:alpine cd client && ls && npm install && npm test'
     }
 
     stage('Deploy') {
