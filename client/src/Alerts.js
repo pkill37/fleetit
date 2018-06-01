@@ -42,26 +42,23 @@ class Alerts extends React.Component {
             <div className="content-wrapper">
                 <h1>Alerts</h1>
 
-                <h2>Speed Alerts</h2>
-                <ul>
                 {this.state.speed.map((s, index) => (
-                    <li key={index}>Bike #{s.bike_id} is over the speed limit at {s.speed} km/h</li>
+                    <div key={index} className="alert alert-info" role="alert">
+                    Bike #{s.bike_id} is over the speed limit at {s.speed} km/h
+                    </div>
                 ))}
-                </ul>
 
-                <h2>Heart Rate Alerts</h2>
-                <ul>
                 {this.state.heart.map((h, index) => (
-                    <li key={index}>Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps</li>
+                    <div key={index} className="alert alert-danger" role="alert">
+                    Bike #{h.bike_id} exceeds the heart rate at {h.heart_rate} bps
+                    </div>
                 ))}
-                </ul>
 
-                <h2>Battery Alerts</h2>
-                <ul>
                 {this.state.battery.map((b, index) => (
-                    <li key={index}>Bike #{b.bike_id} is on low battery ({b.battery}%)</li>
+                    <div key={index} className="alert alert-warning" role="alert">
+                    Bike #{b.bike_id} is low on battery at {b.battery}%
+                    </div>
                 ))}
-                </ul>
             </div>
         )
     }
