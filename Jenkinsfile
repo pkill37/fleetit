@@ -28,12 +28,14 @@ node {
     }
 
     stage('Test images') {
+        sh './wait-for websocket:9999 -- ./wait-for api:8080 -- echo "Services are up! Starting tests..."'
+
         api.inside {
             sh 'echo "Running MVN tests..."'
         }
 
         clientdev.inside {
-            sh './wait-for websocket:9999 -- ./wait-for api:8080 -- npm install && npm test'
+            sh 'npm install && npm test'
         }
     }
 
