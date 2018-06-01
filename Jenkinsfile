@@ -35,7 +35,7 @@ node {
         }
 
         clientdev.inside {
-            sh 'npm install && npm test'
+            sh 'cd client && npm install && npm test'
         }
     }
 
