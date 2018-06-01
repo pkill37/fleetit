@@ -8,18 +8,61 @@ Build all images:
 ./build.sh
 ```
 
-Start the cluster and containers and pray that the services converge:
+Initialize the cluster:
 
 ```
-docker swarm init --force-new-cluster
+docker swarm init
+```
+
+Deploy the development stack:
+
+```
 docker stack deploy -c development.yml fleetit
 ```
 
-Stop the containers and leave the cluster:
+Remove the stack:
 
 ```
 docker stack rm fleetit
-docker swarm leave --force
+```
+
+Leave the cluster:
+
+```
+docker swarm leave
+```
+
+## Production
+
+Configure the DigitalOcean firewall on all nodes of the cluster:
+
+```
+./digitalocean_firewall.sh -m
+./digitalocean_firewall.sh -w
+```
+
+Build all images:
+
+```
+./build.sh
+```
+
+Initialize the cluster from a manager node:
+
+```
+docker swarm init
+```
+
+Join the cluster on all worker nodes:
+
+```
+docker swarm join --token $TOKEN $MANAGER:2377
+```
+
+Deploy the production stack on the cluster from a manager node:
+
+```
+docker stack deploy -c production.yml fleetit
 ```
 
 ## Monitoring
