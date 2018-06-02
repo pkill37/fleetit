@@ -1,39 +1,19 @@
 node {
-    def sensor
-    def websocket
-    def clientdev
-    def clientprod
-    def postgres
-    def api
-    def alerts
-    def elastisearch
-    def metricbeat
-    def kibana
-
     stage('Clone repository') {
         checkout scm
     }
 
     stage('Build images') {
-        sensor = docker.build("fleetit-sensor", "./sensor")
-        websocket = docker.build("fleetit-websocket", "./websocket")
-        clientdev = docker.build("fleetit-client-development", "-f client/Dockerfile.development ./client")
-        clientprod = docker.build("fleetit-client-production", "-f client/Dockerfile.production ./client")
-        postgres = docker.build("fleetit-postgres", "./postgres")
-        api = docker.build("fleetit-api", "./api")
-        alerts = docker.build("fleetit-alerts", "./alerts")
-        elasticsearch = docker.build("fleetit-elasticsearch", "./monitoring/elasticsearch")
-        metricbeat = docker.build("fleetit-metricbeat", "./monitoring/metricbeat")
-        kibana = docker.build("fleetit-kibana", "./monitoring/kibana")
+        sh './build.sh'
     }
 
     stage('Test images') {
-        sh './wait-for websocket:9999 -- ./wait-for api:8080 -- echo "Services are up! Starting tests..."'
+        sh './wait-for zookeeper:22181 -- ./wait-for kafka:19092 -- ./wait-for websocket:9999 -- ./wait-for postgres:5432 -- ./wait-for api:8080 -- echo "Services are up"'
         sh 'docker run --network fleetit_network -w /app -v $PWD/client:/app node:alpine sh -c "npm install && npm test"'
         sh 'docker run --network fleetit_network -w /app -v $PWD/api:/app maven:3.5-jdk-9-slim sh -c "mvn test"'
     }
 
-    stage('Deploy') {
+    stage('Deploy images') {
         sh 'docker service update fleetit_sensor'
         sh 'docker service update fleetit_websocket'
         sh 'docker service update fleetit_client'
@@ -43,5 +23,12 @@ node {
         sh 'docker service update fleetit_elasticsearch'
         sh 'docker service update fleetit_metricbeat'
         sh 'docker service update fleetit_kibana'
+    }
+
+    post {
+        always {
+            deleteDir()
+            sh 'docker system prune -af'
+        }
     }
 }
