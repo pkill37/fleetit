@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "4da332d0-65e4-11e8-883a-b94f46a54b78",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Zookeeper",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"title\":\"\",\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":4,\"w\":8,\"h\":2,\"i\":\"1\"},\"id\":\"1ff854b0-65e3-11e8-883a-b94f46a54b78\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":0,\"w\":9,\"h\":4,\"i\":\"2\"},\"id\":\"6af92fd0-65e2-11e8-883a-b94f46a54b78\",\"title\":\"\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":9,\"y\":2,\"w\":3,\"h\":2,\"i\":\"3\"},\"id\":\"d85f5220-65e2-11e8-883a-b94f46a54b78\",\"title\":\"\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":9,\"y\":0,\"w\":3,\"h\":2,\"i\":\"4\"},\"id\":\"5483f060-65e1-11e8-883a-b94f46a54b78\",\"title\":\"\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"5\",\"gridData\":{\"x\":8,\"y\":4,\"w\":4,\"h\":2,\"i\":\"5\"},\"id\":\"b7f18340-65e3-11e8-883a-b94f46a54b78\",\"title\":\"\",\"type\":\"visualization\",\"version\":\"6.2.3\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"
+      }
+    }
+  }
+]

@@ -212,6 +212,15 @@ services:
     networks:
       - network
 
+  import_dashboards:
+    image: fleetit-import_dashboards:latest
+    deploy:
+      restart_policy:
+        delay: 15s
+        condition: on-failure
+    networks:
+      - network
+
 networks:
   network:
     driver: overlay
