@@ -62,9 +62,10 @@ metricbeat.modules:
   hosts: ["zookeeper:22181"]
 
 - module: kafka
-  metricsets: ["consumergroup", "partition"]
+  metricsets: ["partition", "consumergroup"]
   period: 10s
-  hosts: ["kafka:9092"]
+  hosts: ["kafka:19092"]
+  client_id: metricbeat
 
 processors:
 - add_cloud_metadata:

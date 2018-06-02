@@ -185,3 +185,15 @@ services:
     ports:
       - "8082:8080"
       - "50000:50000"
+
+  import_dashboards:
+    image: fleetit-import_dashboards:latest
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
+      restart_policy:
+        delay: 15s
+        condition: on-failure
