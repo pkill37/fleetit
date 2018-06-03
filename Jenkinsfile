@@ -13,6 +13,10 @@ node {
         sh 'docker run --network fleetit_network -w /app -v $PWD/api:/app maven:3.5-jdk-9-slim sh -c "mvn test"'
     }
 
+    stage('Push images') {
+        sh './push.sh'
+    }
+
     stage('Deploy images') {
         sh 'docker service update fleetit_sensor'
         sh 'docker service update fleetit_websocket'

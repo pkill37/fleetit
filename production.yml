@@ -34,7 +34,7 @@ services:
       - network
 
   sensor:
-    image: fleetit-sensor:latest
+    image: faviouz/fleetit-sensor:latest
     deploy:
       placement:
         constraints:
@@ -53,7 +53,7 @@ services:
       - network
 
   websocket:
-    image: fleetit-websocket:latest
+    image: faviouz/fleetit-websocket:latest
     deploy:
       placement:
         constraints:
@@ -74,7 +74,7 @@ services:
       - network
 
   client:
-    image: fleetit-client-production:latest
+    image: faviouz/fleetit-client-production:latest
     deploy:
       placement:
         constraints:
@@ -93,7 +93,7 @@ services:
       - network
 
   postgres:
-    image: fleetit-postgres:latest
+    image: faviouz/fleetit-postgres:latest
     deploy:
       placement:
         constraints:
@@ -114,7 +114,7 @@ services:
       - network
 
   api:
-    image: fleetit-api:latest
+    image: faviouz/fleetit-api:latest
     deploy:
       placement:
         constraints:
@@ -138,7 +138,7 @@ services:
       - network
 
   alerts:
-    image: fleetit-alerts:latest
+    image: faviouz/fleetit-alerts:latest
     deploy:
       placement:
         constraints:
@@ -161,7 +161,7 @@ services:
       - network
 
   elasticsearch:
-    image: fleetit-elasticsearch:latest
+    image: faviouz/fleetit-elasticsearch:latest
     deploy:
       placement:
         constraints:
@@ -185,7 +185,7 @@ services:
       - network
 
   metricbeat:
-    image: fleetit-metricbeat:latest
+    image: faviouz/fleetit-metricbeat:latest
     user: root
     deploy:
       placement:
@@ -205,7 +205,7 @@ services:
       - network
 
   kibana:
-    image: fleetit-kibana:latest
+    image: faviouz/fleetit-kibana:latest
     deploy:
       placement:
         constraints:
@@ -226,7 +226,7 @@ services:
       - network
 
   jenkins:
-    image: fleetit-jenkins:latest
+    image: faviouz/fleetit-jenkins:latest
     user: root
     deploy:
       placement:
@@ -245,7 +245,7 @@ services:
       - network
 
   import_dashboards:
-    image: fleetit-import_dashboards:latest
+    image: faviouz/fleetit-import_dashboards:latest
     deploy:
       placement:
         constraints:
