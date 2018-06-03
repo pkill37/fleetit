@@ -8,4 +8,5 @@ docker service update --force fleetit_api --image faviouz/fleetit-api
 docker service update --force fleetit_elasticsearch --image faviouz/fleetit-elasticsearch
 docker service update --force fleetit_metricbeat --image faviouz/fleetit-metricbeat
 docker service update --force fleetit_kibana --image faviouz/fleetit-kibana
+docker service update --force fleetit_import_dashboards --image faviouz/fleetit-import_dashboards
 docker service update --force fleetit_client --image faviouz/fleetit-client-production
