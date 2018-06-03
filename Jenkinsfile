@@ -30,4 +30,9 @@ node {
         sh 'docker service update fleetit_metricbeat'
         sh 'docker service update fleetit_kibana'
     }
+
+    stage('Cleanup images') {
+        sh 'docker system prune -f'
+        deleteDir()
+    }
 }
