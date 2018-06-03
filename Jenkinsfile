@@ -14,7 +14,9 @@ node {
     }
 
     stage('Push images') {
-        sh './push.sh'
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            sh './push.sh'
+        }
     }
 
     stage('Deploy images') {
