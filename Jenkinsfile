@@ -27,7 +27,6 @@ node {
 
     post {
         always {
-            deleteDir()
             sh 'docker system prune -af'
         }
     }
