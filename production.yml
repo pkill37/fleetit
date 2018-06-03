@@ -6,7 +6,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
       restart_policy:
         delay: 5s
         condition: any
@@ -36,6 +36,9 @@ services:
   sensor:
     image: fleetit-sensor:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 5
       update_config:
         parallelism: 1
@@ -75,7 +78,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -162,7 +165,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
