@@ -197,7 +197,8 @@ services:
     user: root
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
       restart_policy:
         delay: 5s
         condition: any
