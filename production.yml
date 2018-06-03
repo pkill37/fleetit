@@ -4,6 +4,9 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == manager
       restart_policy:
         delay: 5s
         condition: any
@@ -16,6 +19,9 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       restart_policy:
         delay: 5s
         condition: any
@@ -46,6 +52,9 @@ services:
   websocket:
     image: fleetit-websocket:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -64,6 +73,9 @@ services:
   client:
     image: fleetit-client-production:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == manager
       replicas: 1
       update_config:
         parallelism: 1
@@ -80,6 +92,9 @@ services:
   postgres:
     image: fleetit-postgres:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -98,6 +113,9 @@ services:
   api:
     image: fleetit-api:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -119,6 +137,9 @@ services:
   alerts:
     image: fleetit-alerts:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -139,6 +160,9 @@ services:
   elasticsearch:
     image: fleetit-elasticsearch:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == manager
       replicas: 1
       update_config:
         parallelism: 1
@@ -161,6 +185,9 @@ services:
     image: fleetit-metricbeat:latest
     user: root
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -177,6 +204,9 @@ services:
   kibana:
     image: fleetit-kibana:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
@@ -214,6 +244,9 @@ services:
   import_dashboards:
     image: fleetit-import_dashboards:latest
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 1
       update_config:
         parallelism: 1
