@@ -19,7 +19,7 @@ const Header = () => (
 				<li className='nav-item'>
 					<div className="nav-link">
 						<i className="material-icons" style={{display: "inline-block", verticalAlign: "middle"}}>notifications</i>
-						<Link to='/alerts' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>Alerts</Link>
+						<Link to='/alerts' style={{display: "inline-block", verticalAlign: "middle", marginLeft: "10px"}}>Test</Link>
 					</div>
 				</li>
 				<li className='nav-item'>
