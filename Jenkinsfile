@@ -24,10 +24,4 @@ node {
         sh 'docker service update fleetit_metricbeat'
         sh 'docker service update fleetit_kibana'
     }
-
-    post {
-        always {
-            sh 'docker system prune -af'
-        }
-    }
 }
