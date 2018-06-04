@@ -25,7 +25,7 @@ node {
     }
 
     stage('Cleanup images') {
-        sh 'docker system prune -f'
+        sh 'docker system prune -af'
         deleteDir()
     }
 }
