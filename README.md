@@ -2,7 +2,7 @@
 
 ![](https://i.imgur.com/ljbMfoM.png?3) ![](https://i.imgur.com/6i9OaXP.png?4) ![](https://i.imgur.com/Pmfx3Vh.png?3)
 
-Fleetit is a bike tracking web application where one can monitor and be alerted about speed, temperature, CO2 levels, etc. of bikes on a live-updated map. It was developed as an exercise in Software Engineering where various technologies and methodologies (Docker, Docker Swarm, Kafka, Zookeeper, PostgreSQL, ELK, Metricbeat, NGINX, React, SpringBoot, TDD, NodeJS, WebSocket, Python) come into play in an event-driven architecture.
+Fleetit is a bike tracking web application where one can monitor and be alerted about speed, temperature, CO2 levels, etc. of bikes on a live-updated map. It was developed as an exercise in Software Engineering where various technologies and methodologies (Docker, Docker Swarm, Kafka, Zookeeper, PostgreSQL, ELK, Metricbeat, NGINX, React, SpringBoot, REST, TDD, NodeJS, WebSockets, Python) come into play in an event-driven architecture.
 
 The entire project is designed to run on a Docker Swarm cluster (enabling easy scalability, replication, zero-downtime deployments, fault tolerance, load balancing) with separate development and production stacks that was eventually deployed on 5 DigitalOcean virtual machines for a proof-of-concept production setup.
 
