@@ -63,14 +63,10 @@ docker stack deploy -c production.yml fleetit
 
 ## Documentation
 
-### Development
-
 ```bash
 cd docs/src/
 docker run --rm -v "$PWD:/gitbook" -p 4000:4000 billryan/gitbook gitbook serve
 ```
-
-### Production
 
 ```bash
 cd docs/src/
